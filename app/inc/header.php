@@ -25,6 +25,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/qrcode-app/app/about.php">O apke</a>
           </li>
+          <li class="nav-item" style="background-color: #cccccc; border-radius: 5px;">
+            <a class="nav-link" href="/qrcode-app/app/login.php" style="font-weight: bold; color: #000;">QR Code Login</a>
+          </li>
         </ul>
       </div>
   </div>
