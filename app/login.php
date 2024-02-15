@@ -13,12 +13,16 @@
                             <div class="mb-3">
                                 <label for="loginEmail" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="loginEmail" name="loginEmail" required>
+                                <div class="d-grid"><br>
                                 <?php if (isset($_SESSION['error'])) { 
                                     echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error'] . '</div>'; unset($_SESSION['error']);}?>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="loginPassword" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="loginPassword" name="loginPassword" required>
+                            </div>
+                            <div class="d-grid">
                                 <?php if (isset($_SESSION['error2'])) { 
                                     echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error2'] . '</div>'; unset($_SESSION['error2']);}?>
                             </div>
@@ -46,6 +50,13 @@
                                 <label for="registerPassword" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="registerPassword" name="registerPassword" required>
                             </div>
+                                <div class="d-grid">
+                                    <?php if (isset($_SESSION['error3'])) { 
+                                        echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error3'] . '</div>'; unset($_SESSION['error3']);
+                                        }if (isset($_SESSION['success'])){
+                                            echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>'; unset($_SESSION['success']);
+                                        }?>
+                                </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">Registration</button>
                             </div>
