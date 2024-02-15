@@ -2,7 +2,6 @@
 <?php include 'config/database.php';?>
 
 <?php
-
 $iban = $sum = "";
 $ibanErr = $sumErr = "";
 /*
@@ -45,8 +44,7 @@ if (isset($_POST['submit'])){
         }
     }
 }
-?>
-<?php
+
 session_start();
 
 // Kontrola, či je používateľ prihlásený
@@ -77,7 +75,16 @@ if (isset($_SESSION['user_id'])) {
 } else {
   echo "<p>Vitajte v apke QRCode.</p>";
 }
-?>
+
+  if (isset($_SESSION['success1'])) { 
+    echo '<br><div class="alert alert-success" role="alert">' . $_SESSION['success1'] . '</div>'; unset($_SESSION['success1']);}?>
+
+<!-- Skript na schovanie alertu po úspešnom prihlásení -->
+<script>
+  setTimeout(function(){
+    document.querySelector('.alert').style.display = 'none';
+  }, 3000);
+</script>
 
 <!-- Form for all inputs (Túto časť kódu mám ešte rozpracovanú.-->
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" class="mt-4 w-75">
