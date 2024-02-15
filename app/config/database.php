@@ -1,4 +1,5 @@
 <?php
+// Premenné a parametre na pripojenie do db
 $servername = "localhost";
 $username = "Admin";
 $password = "0022558899mM@";
