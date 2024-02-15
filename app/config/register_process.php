@@ -2,39 +2,45 @@
 
 include 'database.php';
 
-// Vytvorenie pripojenia
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Skontrolovať pripojenie
-if ($conn->connect_error) {
-  die('Connection failed: ' . $conn->connect_error);
-}
-
-$conn->set_charset("utf8");
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Spracovanie registrácie
     $email = $_POST['registerEmail'];
     $password = $_POST['registerPassword'];
     $nickname = $_POST['registerNickname'];
 
-    // Heslo zahashovať
-    $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+    // Kontrola, či sa už email nenachádza v databáze
+    $checkEmail = "SELECT id FROM users WHERE email = ?";
+    $checkEmailStm = $conn->prepare($checkEmail);
+    $checkEmailStm -> bind_param("s", $email);
+    $checkEmailStm-> execute();
+    $checkEmailResult = $checkEmailStm-> get_result();
 
-    // Vložiť nového používateľa do databázy
-    $sql = "INSERT INTO users (email, password, nickname) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $email, $hashPassword, $nickname);
-
-    if ($stmt->execute()) {
+    if ($checkEmailResult->num_rows > 0){
+        // Email už existuje, zobraz chybovú hlášku
+        $_SESSION['error3'] = "Tento email sa už používa, zadajte iný email";
         header("Location: /qrcode-app/app/login.php");
-    } else {
-        echo "Error: " . $stmt->error;
+        echo "Tento email sa už používa, zadajte iný email";
+        exit();
+    }else{
+        // Heslo zahashovať
+        $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        // Vložiť nového používateľa do databázy
+        $sql = "INSERT INTO users (email, password, nickname) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $email, $hashPassword, $nickname);
+
+        if ($stmt->execute()) {
+            $_SESSION['success'] = "Registrácia prebehla úspešne!";
+            header("Location: /qrcode-app/app/login.php");
+            exit();
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
     }
 
-    $stmt->close();
+    $checkEmailStm->close();
 }
-
-$conn->close();
-
 ?>
