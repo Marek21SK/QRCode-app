@@ -1,8 +1,14 @@
 <?php
-$servername = "localhost";
-$username = "Admin";
-$password = "0022558899mM@";
-$dbname = "qrcodoe_dev";
+
+//Načítanie údajov z JSON súboru
+$configData = file_get_contents('config/data.json');
+$config = json_decode($configData, true);
+
+//Priradenie hodnôt z konfiguračného súboru
+$servername = "localhost"; //$config["DB_HOST"];
+$username = "Admin"; //$config["DB_USERNAME"];
+$password = "0022558899mM@"; //$config["DB_PASSWORD"];
+$dbname = "qrcodoe_dev"; //$config["DB_NAME"];
 
 // Vytvorenie pripojenia
 $conn = new mysqli($servername, $username, $password, $dbname);
