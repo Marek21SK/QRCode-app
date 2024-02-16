@@ -19,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Email už existuje, zobraz chybovú hlášku
         $_SESSION['error3'] = "Tento email sa už používa, zadajte iný email";
         header("Location: /qrcode-app/app/login.php");
-        echo "Tento email sa už používa, zadajte iný email";
         exit();
     }else{
         // Heslo zahashovať
