@@ -3,6 +3,13 @@
 <?php include 'config/register_process.php';?>
 <?php include 'config/database.php';?>
 
+<!-- Skript na schovanie alertu po určitom čase -->
+<script>
+  setTimeout(function(){
+    document.querySelector('.alert').style.display = 'none';
+  }, 4000);
+</script>
+
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
