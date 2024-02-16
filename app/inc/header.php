@@ -22,7 +22,7 @@
             <a class="nav-link" href="/qrcode-app/app/index.php">IBAN</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/qrcode-app/app/qrcode.php">Zdieľanie platby</a>
+            <a class="nav-link" href="/qrcode-app/app/payment_sharing.php">Zdieľanie platby</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/qrcode-app/app/about.php">O apke</a>
