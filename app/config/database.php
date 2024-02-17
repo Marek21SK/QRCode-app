@@ -1,14 +1,14 @@
 <?php
 
 //Načítanie údajov z JSON súboru
-$configData = file_get_contents('config/data.json');
+$configData = file_get_contents(__DIR__ . '/data.json');
 $config = json_decode($configData, true);
 
 //Priradenie hodnôt z konfiguračného súboru
-$servername = "localhost"; //$config["DB_HOST"];
-$username = "Admin"; //$config["DB_USERNAME"];
-$password = "0022558899mM@"; //$config["DB_PASSWORD"];
-$dbname = "qrcodoe_dev"; //$config["DB_NAME"];
+$servername = $config["DB_HOST"];
+$username = $config["DB_USERNAME"];
+$password = $config["DB_PASSWORD"];
+$dbname = $config["DB_NAME"];
 
 // Vytvorenie pripojenia
 $conn = new mysqli($servername, $username, $password, $dbname);
