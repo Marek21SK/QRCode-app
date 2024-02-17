@@ -59,10 +59,9 @@
                             </div>
                                 <div class="d-grid">
                                     <?php if (isset($_SESSION['error3'])) { 
-                                        echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error3'] . '</div>'; unset($_SESSION['error3']);
-                                        }if (isset($_SESSION['success'])){
-                                            echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>'; unset($_SESSION['success']);
-                                        }?>
+                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error3'] . '</div>'; unset($_SESSION['error3']);}
+                                            if (isset($_SESSION['success'])){
+                                            echo '<div class="alert alert-success" role="alert">' . $_SESSION['success'] . '</div>'; unset($_SESSION['success']);}?>
                                 </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">Registration</button>

@@ -2,7 +2,6 @@
     include 'inc/header.php';
     include 'config/database.php';
 
-
     $iban = $sum = "";
     $ibanErr = $sumErr = "";
     /*
@@ -76,15 +75,7 @@
             <?php echo $ibanErr; ?>
             </div>
       </div>
-      <!--
-      <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control < ?php echo !$emailErr ?: 'is-invalid';?>" id="email" name="email" placeholder="Zadajte email">
-        <div class="invalid-feedback">
-          < ?php echo $emailErr; ?>
-        </div>
-      </div>
-      -->
+
       <div class="mb-3">
         <label for="moneytype" class="form-label">Mena prevodu</label>
         <input type="text" class="form-control" id="moneytype" name="moneytype" maxlength="3" placeholder="EUR">
