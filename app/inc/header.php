@@ -1,4 +1,5 @@
-<?php include 'config/common.php' ?>
+<?php include 'config/common.php';
+      include 'config/database.php';?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,16 +29,27 @@
             <a class="nav-link" href="/qrcode-app/app/about.php">O apke</a>
           </li>
           <?php 
-          if (isset($_SESSION['user_id'])){
-            // Používateľ je prihlásený, nezobrazujeme prihlasovacie element
-            echo ('<li class="nav-item" style="background-color: #cccccc; border-radius: 5px;">
-            <a class="nav-link" href="/qrcode-app/app/login.php" style="font-weight: bold; color: #000;">logged in as '. $_SESSION['user_id'] .'</a>
-          </li>');
-          }else{
-            echo ('<li class="nav-item" style="background-color: #cccccc; border-radius: 5px;">
-            <a class="nav-link" href="/qrcode-app/app/login.php" style="font-weight: bold; color: #000;">QR Code Login</a>
-          </li>');
-          }
+              if (isset($_SESSION['user_id'])){
+                // Používateľ je prihlásený, zobrazíme informácie o prihlásení
+                $user_id = $_SESSION['user_id'];
+                $sql = "SELECT nickname FROM users WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0){
+                    $row = $result->fetch_assoc();
+                    echo '<li class="nav-item" style="background-color: #cccccc; border-radius: 5px;">
+                            <a class="nav-link" href="#" style="font-weight: bold; color: #000;">Vitajte, ' . $row['nickname'] . '</a>
+                        </li>';
+                }
+                $stmt->close();
+              } else {
+                // Používateľ nie je prihlásený, zobrazíme odkaz na prihlásenie alebo registráciu
+                echo '<li class="nav-item" style="background-color: #cccccc; border-radius: 5px;">
+                        <a class="nav-link" href="/qrcode-app/app/login.php" style="font-weight: bold; color: #000;">Registrácia | Prihlásenie</a>
+                    </li>';}
           ?>
         </ul>
       </div>
