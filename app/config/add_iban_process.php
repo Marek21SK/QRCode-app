@@ -1,7 +1,11 @@
 <?php
 
 include 'database.php';
-include 'common.php';
+
+// Ak nie je inicializovaná session, inicializujeme ju
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Kontrola, či už je používateľ prihlásený
 if (!isset($_SESSION['user_id'])) {

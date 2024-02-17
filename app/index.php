@@ -1,8 +1,5 @@
-<?php include 'inc/header.php'; ?>
-<?php include 'config/database.php';?>
-
-<?php
-session_start();
+<?php include 'inc/header.php';
+      include 'config/database.php';
 
 // Kontrola, či je používateľ prihlásený
 if (isset($_SESSION['user_id'])) {
@@ -18,7 +15,6 @@ if (isset($_SESSION['user_id'])) {
       $row = $result->fetch_assoc();
       $nickname = $row['nickname'];
       echo "<h2>Vitajte, používateľ: $nickname</h2>";
-      // echo "<a href='/qrcode-app/app/logout.php'>Odhlasiť sa</a>";
       echo '<div class="d-grid">
             <form action="/qrcode-app/app/logout.php" method="POST">
                 <button type="submit" class="btn btn-dark">Odhlásit</button>

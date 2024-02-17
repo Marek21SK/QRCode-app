@@ -1,8 +1,11 @@
 <?php
 
 include 'database.php';
-//include 'config/common.php';
-session_start();
+
+// Ak nie je inicializovaná session, inicializujeme ju
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
@@ -37,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             header("Location: /qrcode-app/app/index.php");
             exit();
         } else {
-            $_SESSION['error'] = "Zadali ste nesprávne meno alebo heslo";
+            $_SESSION['error'] = "Zadali ste nesprávný email alebo heslo";
             header("Location: /qrcode-app/app/login.php");
         }
     } else {
