@@ -17,8 +17,8 @@ if (!isset($_SESSION['user_id'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Spracovanie nového IBAN-u
-    $user_id = $_SESSION['user_id'];
     $iban = $_POST['iban'];
+    $user_id = $_SESSION['user_id'];
 
     // IBAN sa do databázy uloží bez medzier
     $iban = str_replace(' ', '', $iban);
@@ -45,9 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Kontrola či už IBAN neexistuje v databáze
-    $checkIBAN = "SELECT id FROM iban WHERE iban = ? AND iban_id != ?";
+    $checkIBAN = "SELECT id FROM iban WHERE iban = ? AND iban_id = ?";
     $checkIBANsmt = $conn-> prepare($checkIBAN);
-    $checkIBANsmt-> bind_param("si", $iban, $iban_id);
+    $checkIBANsmt-> bind_param("si", $iban, $user_id);
     $checkIBANsmt-> execute();
     $checkIBANresult = $checkIBANsmt->get_result();
 
