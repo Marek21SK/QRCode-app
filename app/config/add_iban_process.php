@@ -20,6 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['user_id'];
     $iban = $_POST['iban'];
 
+    // IBAN sa do databázy uloží bez medzier
+    $iban = str_replace(' ', '', $iban);
+
     // Kontrola, IBAN začíná prefixom "SK"
     if (substr($iban, 0, 2) !== 'SK') {
         $_SESSION['error5'] = "IBAN musí začínať prefixom 'SK'.";
@@ -42,9 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Kontrola či už IBAN neexistuje v databáze
-    $checkIBAN = "SELECT id FROM iban WHERE iban = ?";
+    $checkIBAN = "SELECT id FROM iban WHERE iban = ? AND iban_id != ?";
     $checkIBANsmt = $conn-> prepare($checkIBAN);
-    $checkIBANsmt-> bind_param("s", $iban);
+    $checkIBANsmt-> bind_param("si", $iban, $iban_id);
     $checkIBANsmt-> execute();
     $checkIBANresult = $checkIBANsmt->get_result();
 
