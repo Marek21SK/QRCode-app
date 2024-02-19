@@ -4,14 +4,12 @@
 
     $iban = $sum = "";
     $ibanErr = $sumErr = "";
-    /*
-        $date_iban = $email = $name = $info_name = $adress = $vs = $ss = $ks = $moneytype = "";
-        $date_ibanErr = $emailErr = $nameErr = $info_nameErr = $adressErr $vsErr = $ssErr = $ksErr = $moneytypeErr = "";
-    */
+
     // Form submit
     if (isset($_POST['submit'])){
         // Validate IBAN
-        if (empty($_POST['iban'])){
+        $selectIBAN = isset($_POST['iban']) ? trim($_POST['iban']): '';
+        if (empty($selectIBAN)){
             $ibanErr = 'IBAN je potrebný';
         }else{
             $iban = filter_input(INPUT_POST, 'iban', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -39,28 +37,63 @@
     // Zatiaľ iba takto pre overenie.
     // Kontrola, či je používateľ prihlásený
     if (!isset($_SESSION['user_id'])) {
-        echo "<p>Pre zobrazenie vašich IBAN-ov sa prosím prihláste.</p>";
+      echo "<p>Pre zobrazenie vašich IBAN-ov sa prosím prihláste.</p>";
     } else {
-        // Získanie IBAN-ov pre prihláseného užívateľa
-        $user_id = $_SESSION['user_id'];
-        $getIBAN = "SELECT iban FROM iban WHERE iban_id = ?";
-        $getIBANstmt = $conn->prepare($getIBAN);
-        $getIBANstmt->bind_param("i", $user_id);
-        $getIBANstmt->execute();
-        $result = $getIBANstmt->get_result();
+      // Získanie IBAN-ov pre prihláseného užívateľa
+      $user_id = $_SESSION['user_id'];
+      $getIBAN = "SELECT iban FROM iban WHERE iban_id = ?";
+      $getIBANstmt = $conn->prepare($getIBAN);
+      $getIBANstmt->bind_param("i", $user_id);
+      $getIBANstmt->execute();
+      $result = $getIBANstmt->get_result();
 
-        if ($result->num_rows > 0) {
-            echo "<h3>Pridané IBAN-y pre prihláseného užívateľa:</h3>";
-            echo "<ul>";
-            while ($row = $result->fetch_assoc()) {
-                echo "<li>" . htmlspecialchars($row['iban']) . "</li>";
-            }
-            echo "</ul>";
-        } else {
-            echo "<p>Žiadne pridané IBAN-y pre prihláseného užívateľa.</p>";
-        }
+      if ($result->num_rows > 0) {
+          echo "<h3>Pridané IBAN-y pre prihláseného užívateľa:</h3>";
+          echo "<ul>";
+          while ($row = $result->fetch_assoc()) {
+              echo "<li>" . htmlspecialchars($row['iban']) . "</li>";
+          }
+          echo "</ul>";
+      } else {
+          echo "<p>Žiadne pridané IBAN-y pre prihláseného užívateľa.</p>";
+      }
 
-        $getIBANstmt->close();
+      $getIBANstmt->close();
+    }
+
+    // Funkcia na získanie IBAN-ov pre aktuálneho používateľa
+    function getSavedIBANs($conn, $user_id){
+      $ibanList = array();
+
+      // Príprava SQL dotazu pre získanie IBAN-u z databázy
+      $sql = "SELECT iban FROM iban WHERE iban_id = ?";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("i", $user_id);
+      $stmt->execute();
+      $result = $stmt->get_result();
+
+      // Načítanie IBAN-ov do poľa
+      while ($row = $result->fetch_assoc()){
+        $ibanList[] = $row['iban'];
+      }
+      $stmt->close();
+
+      return $ibanList;
+    }
+
+    // Použitie funkcie
+    $loggedUser = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    if ($loggedUser){
+      $savedIBANs = getSavedIBANs($conn, $loggedUser);
+    }else {
+      $savedIBANs = array();
+    }
+
+    // Funkcia na zobrazenie IBAN s medzerami po 4 znakoch (musím oddtestovať ako sa ukladajú do db)
+    function formatIBAN($iban) {
+      $formattedIBAN = chunk_split($iban, 4, ' ');
+      // Odstránenie medzery na konci
+      return rtrim($formattedIBAN);
     }
 ?>
 
@@ -68,12 +101,18 @@
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" class="mt-4 w-75">
   <div class="row">
     <div class="col-md-6">
-        <div class="mb-3">
-            <label for="iban" class="form-label">IBAN</label>
-            <input type="text" class="form-control <?php echo !$ibanErr ?: 'is-invalid';?>" id="iban" name="iban" placeholder="SK88 8888 8888 8888 8888 8888">
-            <div class="invalid-feedback">
+      <div class="mb-3">
+        <label for="iban" class="form-label">IBAN</label>
+        <select class="form-control" <?php echo !$ibanErr ?: 'is-invalid';?>" id="iban" name="iban">
+          <option value="" selected disabled>Vyberte IBAN</option>
+          <?php foreach ($savedIBANs as $ibanOption): ?>
+            <option value="<?php echo $ibanOption; ?>"><?php echo formatIBAN($ibanOption); ?></option>
+        <?php endforeach; ?>
+        </select>
+          <!--<input type="text" class="form-control <?php //echo !$ibanErr ?: 'is-invalid';?>" id="iban" name="iban" placeholder="SK88 8888 8888 8888 8888 8888">-->
+          <div class="invalid-feedback">
             <?php echo $ibanErr; ?>
-            </div>
+          </div>
       </div>
 
       <div class="mb-3">
@@ -128,10 +167,10 @@
     </div>
   </div>
   
-  <div class="mb-3">
-    <input type="submit" name="submit" value="Send" class="btn btn-dark w-100">
+  <div class="mb-3 d-flex justify-content-between">
+    <input type="submit" name="submit" value="Odoslať" class="btn btn-primary w-100 mx-2">
+    <input type="submit" name="preview" value="Ukážka" class="btn btn-secondary w-100 mx-2">
   </div>
 </form>
-
 
 <?php include 'inc/footer.php'; ?>
