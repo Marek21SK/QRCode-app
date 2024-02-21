@@ -2,38 +2,67 @@
     include 'inc/header.php';
     include 'config/database.php';
 
-    $iban = $sum = "";
-    $ibanErr = $sumErr = "";
+    $sum = $selectIBAN = "";
+    $sumErr = $ibanErr = "";
 
-    // Form submit
-    if (isset($_POST['submit'])){
-        // Validate IBAN
-        $selectIBAN = isset($_POST['iban']) ? trim($_POST['iban']): '';
-        if (empty($selectIBAN)){
-            $ibanErr = 'IBAN je potrebný';
-        }else{
-            $iban = filter_input(INPUT_POST, 'iban', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        }
-    
-        // Validate sum
+    // Odoslať formulár
+    if (isset($_POST['submit'])){    
+        // Overiť sumu
         if (empty($_POST['sum'])){
             $sumErr = 'Suma je potrebná';
         }else{
             $sum = filter_input(INPUT_POST, 'sum', FILTER_SANITIZE_NUMBER_INT);
         }
-    
-        if (empty($ibanErr) && empty($sumErr)){
-            // Add to database
-            $sql = "INSERT INTO qrcode (email, iban, sum, vs, ss, ks, moneytype, name, info_name, adress, date_iban) VALUES ('$email', '$iban', '$sum', '$vs', '$ss', '$ks', '$moneytype', '$name', '$info_name', '$adress', '$date_iban')";
-            if (mysqli_query($conn, $sql)){
-                // Succes
+
+        // Overiť IBAN
+        $selectIBAN = isset($_POST['payment_id']);
+        if (empty($selectIBAN)){
+          $ibanErr = 'IBAN je potrebný';
+        } else {
+          $iban = filter_input(INPUT_POST, 'payment_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        
+          // Získanie id pre vybraný IBAN - ktorý vyberieme zo SELECTU
+          $getIBANid = "SELECT id FROM iban WHERE iban = ?";
+          $stmt = $conn->prepare($getIBANid);
+          $stmt->bind_param("s", $iban);
+          $stmt->execute();
+          $stmt->bind_result($iban_id);
+          $stmt->fetch();
+          $stmt->close();
+        }
+
+        if (empty($sumErr) && empty($ibanErr)){
+          // Overiť hodnoty, ak nie sú vyplnené, tak nastaviť ich hodnotu na NULL ak sú vyplnené uložia sa vyplnené hodnoty do databázy
+          $vs = !empty($_POST['vs']) ? $_POST['vs'] : NULL;
+          $ss = !empty($_POST['ss']) ? $_POST['ss'] : NULL; 
+          $ks = !empty($_POST['ks']) ? $_POST['ks'] : NULL;
+          $moneytype = !empty($_POST['moneytype']) ? $_POST['moneytype'] : NULL;
+          $name = !empty($_POST['name']) ? $_POST['name'] : NULL;
+          $info_name = !empty($_POST['info_name']) ? $_POST['info_name'] : NULL;
+          $adress = !empty($_POST['adress']) ? $_POST['adress'] : NULL;
+          $adress2 = !empty($_POST['adress2']) ? $_POST['adress2'] : NULL;
+          $date_iban = !empty($_POST['date_iban']) ? $_POST['date_iban'] : NULL;
+        
+            // Predpokladáme, že používateľ je prihlásený
+            $user_id = $_SESSION['user_id'];
+            
+            // Pridať do databázy (id_používateľa, id_iban-u, suma, vs, ks, mena, meno, sprava pre príjemcu, adresa1, adresa2, dátum)
+            $sql = "INSERT INTO payment (payment_id, iban_id, sum, vs, ss, ks, moneytype, name, info_name, adress, adress2, date_iban) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("iiisssssssss", $user_id, $iban_id, $sum, $vs, $ss, $ks, $moneytype, $name, $info_name, $adress, $adress2, $date_iban);
+
+            if ($stmt->execute()){
+                // Úspech
                 header('Location: index.php');
             }else {
-                // Error
-                echo 'Error: ' . mysqli_error($conn);
+                // Chyba
+                echo 'Error: ' . $stmt->error;
             }
+            $stmt->close();
         }
     }
+
+    /*
     // Zatiaľ iba takto pre overenie.
     // Kontrola, či je používateľ prihlásený
     if (!isset($_SESSION['user_id'])) {
@@ -57,9 +86,9 @@
       } else {
           echo "<p>Žiadne pridané IBAN-y pre prihláseného užívateľa.</p>";
       }
-
       $getIBANstmt->close();
     }
+    */
 
     // Funkcia na získanie IBAN-ov pre aktuálneho používateľa
     function getSavedIBANs($conn, $user_id){
@@ -98,21 +127,24 @@
 ?>
 
 <!-- Form for all inputs (Túto časť kódu mám ešte rozpracovanú.-->
-<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" class="mt-4 w-75">
+<form action="payment_sharing.php" method="POST" class="mt-4 w-75">
   <div class="row">
     <div class="col-md-6">
       <div class="mb-3">
-        <label for="iban" class="form-label">IBAN</label>
-        <select class="form-control" <?php echo !$ibanErr ?: 'is-invalid';?>" id="iban" name="iban">
+        <label for="payment_id" class="form-label">IBAN</label>
+        <?php if ($ibanErr): ?>
+          <select class="form-control is-invalid" id="payment_id" name="payment_id">
+        <?php else: ?>
+          <select class="form-control" id="payment_id" name="payment_id">
+        <?php endif; ?>
           <option value="" selected disabled>Vyberte IBAN</option>
           <?php foreach ($savedIBANs as $ibanOption): ?>
             <option value="<?php echo $ibanOption; ?>"><?php echo formatIBAN($ibanOption); ?></option>
-        <?php endforeach; ?>
+          <?php endforeach; ?>
         </select>
-          <!--<input type="text" class="form-control <?php //echo !$ibanErr ?: 'is-invalid';?>" id="iban" name="iban" placeholder="SK88 8888 8888 8888 8888 8888">-->
-          <div class="invalid-feedback">
-            <?php echo $ibanErr; ?>
-          </div>
+        <div class="invalid-feedback">
+          <?php echo $ibanErr; ?>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -166,10 +198,20 @@
         <input type="text" class="form-control <" id="adress" name="adress" placeholder="Adresa 1. riadok">
     </div>
   </div>
+
+  <div class="mb-3">
+        <label for="adress2" class="form-label">Adresa 2. riadok</label>
+        <input type="text" class="form-control <" id="adress2" name="adress2" placeholder="Adresa 2. riadok">
+    </div>
+  </div>
   
   <div class="mb-3 d-flex justify-content-between">
-    <input type="submit" name="submit" value="Odoslať" class="btn btn-primary w-100 mx-2">
-    <input type="submit" name="preview" value="Ukážka" class="btn btn-secondary w-100 mx-2">
+  <?php if (isset($_SESSION['user_id'])): ?>
+    <input type="submit" name="submit" value="Odoslať" class="btn btn-primary ms-auto mx-2" style="width: 450px;">
+    <input type="submit" name="preview" value="Ukážka" class="btn btn-secondary me-auto mx-2" style="width: 450px;">
+    <?php else: ?>
+      <h5 class="text-center mx-auto">Pre prácu s týmto formulárom musíte byť prihlásený</h5>
+    <?php endif; ?>
   </div>
 </form>
 
