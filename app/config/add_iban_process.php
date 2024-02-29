@@ -14,6 +14,29 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Funkcia na kontrolu platnosti IBAN-u pre Slovensko
+function isIBANValid($iban) {
+    $iban = strtolower(str_replace(' ','',$iban));
+
+    $MovedChar = substr($iban, 4).substr($iban,0,4);
+    $MovedCharArray = str_split($MovedChar);
+    $NewString = "";
+
+    foreach($MovedCharArray AS $key => $value){
+        if(!is_numeric($MovedCharArray[$key])){
+            $MovedCharArray[$key] = ord($MovedCharArray[$key]) - 87;
+        }
+        $NewString .= $MovedCharArray[$key];
+    }
+
+    if(bcmod($NewString, '97') != 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Spracovanie nového IBAN-u
@@ -40,6 +63,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Kontrola, či IBAN má správny formát (prefix "SK" a 22 čísiel)
     if (!preg_match('/^SK\d{22}$/', $iban)) {
         $_SESSION['error7'] = "IBAN musí mať správny formát.";
+        header("Location: /qrcode-app/app/index.php");
+        exit();
+    }
+
+    // Kontrola, či je IBAN platný (Presun prvých 4 znakov na koniec a kontrola či je číslo deliteľné 97)
+    if (!isIBANValid($iban)) {
+        $_SESSION['error9'] = "IBAN nie je platný.";
         header("Location: /qrcode-app/app/index.php");
         exit();
     }
