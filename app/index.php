@@ -14,11 +14,13 @@ if (isset($_SESSION['user_id'])) {
   if ($result->num_rows > 0) {
       $row = $result->fetch_assoc();
       $nickname = $row['nickname'];
-      echo "<h2>Vitajte, používateľ: $nickname</h2>";
-      echo '<div class="d-grid">
+      echo '<div class="container mt-5 d-flex flex-column align-items-center justify-content-center">';
+      echo "<h2 class='mb-4'>Vitajte, používateľ: <strong>$nickname</strong></h2>";
+      echo '<div class="d-grid gap-2">
             <form action="/qrcode-app/app/logout.php" method="POST">
                 <button type="submit" class="btn btn-dark">Odhlásit</button>
             </form>
+            </div>
             </div>';
   } else {
       echo "Chyba pri získavaní informácií o užívateľovi.";
@@ -26,7 +28,8 @@ if (isset($_SESSION['user_id'])) {
 
   $stmt->close();
 } else {
-  echo "<p>Vitajte v apke QRCode.</p>";
+  echo '<div class="container mt-5 d-flex flex-column align-items-center justify-content-center">
+        <h4><strong>Vitajte v aplikácií QRCode.</strong></h4></div>';
 }
 
   if (isset($_SESSION['success1'])) { 
@@ -67,7 +70,9 @@ if (isset($_SESSION['user_id'])) {
               if (isset($_SESSION['error7'])) { 
                 echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error7'] . '</div>'; unset($_SESSION['error7']);}
               if (isset($_SESSION['error8'])) { 
-                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error8'] . '</div>'; unset($_SESSION['error8']);}?>
+                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error8'] . '</div>'; unset($_SESSION['error8']);}
+              if (isset($_SESSION['error9'])) { 
+                echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error9'] . '</div>'; unset($_SESSION['error9']);}?>
           </div>
         </div>
         <button type="submit" class="btn btn-primary">Pridať IBAN</button>
