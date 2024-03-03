@@ -69,33 +69,6 @@
         }
     }
 
-    /*
-    // Kontrola, či je používateľ prihlásený / 1. spôsob overenie, momentálne nepoužívané
-    if (!isset($_SESSION['user_id'])) {
-      echo "<p>Pre zobrazenie vašich IBAN-ov sa prosím prihláste.</p>";
-    } else {
-      // Získanie IBAN-ov pre prihláseného užívateľa
-      $user_id = $_SESSION['user_id'];
-      $getIBAN = "SELECT iban FROM iban WHERE iban_id = ?";
-      $getIBANstmt = $conn->prepare($getIBAN);
-      $getIBANstmt->bind_param("i", $user_id);
-      $getIBANstmt->execute();
-      $result = $getIBANstmt->get_result();
-
-      if ($result->num_rows > 0) {
-          echo "<h3>Pridané IBAN-y pre prihláseného užívateľa:</h3>";
-          echo "<ul>";
-          while ($row = $result->fetch_assoc()) {
-              echo "<li>" . htmlspecialchars($row['iban']) . "</li>";
-          }
-          echo "</ul>";
-      } else {
-          echo "<p>Žiadne pridané IBAN-y pre prihláseného užívateľa.</p>";
-      }
-      $getIBANstmt->close();
-    }
-    */
-
     // Funkcia na získanie IBAN-ov pre aktuálneho používateľa
     function getSavedIBANs($conn, $user_id){
       $ibanList = array();
@@ -115,7 +88,7 @@
 
       return $ibanList;
     }
-    // Funkcia na získanie platby pre aktuálneho používateľa (rozpracované)
+    // Funkcia na získanie platby pre aktuálneho používateľa
     function getSavedPayments($conn, $user_id){
       $paymentList = array();
 
@@ -248,7 +221,7 @@
   </div>
 </form>
 
-<!-- Modálne okno pre zobrazenie uložených platieb (rozpracované) TODO... -->
+<!-- Modálne okno pre zobrazenie uložených platieb -->
 <div class="modal fade" id="paymentsModal" tabindex="-1" role="dialog" aria-labelledby="paymentsModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -278,7 +251,7 @@
                       Splatnosť: <?= $payment['date_iban'] ? date('Y-m-d', strtotime($payment['date_iban'])) : '' ?><br>
                       Informácia: <?= $payment['info_name'] ? htmlspecialchars($payment['info_name']): '' ?><br>
                     </p> 
-                    <button type="button" style="height: 25px; font-size: 0.6rem; text-align: left;" class="btn btn-primary">Načítať platbu do ukážky</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#previewModal" data-paymentid="<?= $payment['id']; ?>" style="height: 25px; font-size: 0.6rem; text-align: left;" class="btn btn-primary load-payment-btn" onclick="loadAndShowPreview(<?= $payment['id']; ?>)">Načítať platbu do ukážky</button>
                   </div>
                 </div>
               </div>
@@ -291,6 +264,34 @@
     </div>
   </div>
 </div>
+
+<!-- Skript na zobrazenie platby v "Ukážka" po stlačení buttonu-->
+<script>
+  function loadAndShowPreview(paymentId){
+    var payment = <?= json_encode($savedPayments); ?>;
+    var selectedPayment = payment.find(p => p.id == paymentId);
+    //console.log(selectedPayment);
+
+    var $savedIBANs = <?= json_encode($savedIBANs); ?>;
+    var formattedDate = moment(selectedPayment.date_iban).format("YYYY-MM-DD");
+
+    $('#preview_payment_id').val($savedIBANs[selectedPayment.iban_id]);
+    $('#preview_moneytype').val(selectedPayment.moneytype);
+    $('#preview_ks').val(selectedPayment.ks);
+    $('#preview_sum').val(selectedPayment.sum);
+    $('#preview_vs').val(selectedPayment.vs);
+    $('#preview_ss').val(selectedPayment.ss);
+    $('#preview_date_iban').val(formattedDate);
+    $('#preview_info_name').val(selectedPayment.info_name);
+    $('#preview_name').val(selectedPayment.name);
+    $('#preview_adress').val(selectedPayment.adress);
+    $('#preview_adress2').val(selectedPayment.adress2);
+
+    $('previewModal').modal('show');
+
+    generateQRCode();
+  } 
+</script>
 
 <!-- Modálne okno pre zobrazenie ukážky -->
 <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
@@ -383,11 +384,6 @@
 </div>
 
 <!-- IMPLEMENTOVANIE API -->
-<?php
-$date = "2024-03-10 00:00:00"; // Formát našich dátumov v databáze je 'YYYY-MM-DD HH:MM:SS' 
-$paymentDueDate = date('Ymd', strtotime($date)); // preformátovanie na 'YYYYMMDD' tak ako to API vyžaduje
-?>
-
 <!-- Generovanie QR kódov funguje iba na skutočných IBAN číslach -->
 <script>
   function generateQRCode() {
@@ -415,7 +411,12 @@ $paymentDueDate = date('Ymd', strtotime($date)); // preformátovanie na 'YYYYMMD
     $('#qrPrompt').show();
     
     // Vytvorenie URL pre GET request (URL upravená podľa dokumentácii API)
-    var getUrl = 'https://api.freebysquare.sk/pay/v1/generate-png-v2?size=200&color=3&transparent=true&payments=[{"amount":' + sum + ',"currencyCode":"' + moneytype + '","paymentDueDate":"' + <?php echo $paymentDueDate; ?> + '","variableSymbol":"' + vs + '","constantSymbol":"' + ks + '","specificSymbol":"' + ss + '","paymentNote":"' + info_name + '","beneficiaryName":"' + name + '","beneficiaryAddressLine1":"' + adress + '","beneficiaryAddressLine2":"' + adress2 + '","bankAccounts":[{"iban":"' + iban + '","bic":null}]}]';
+    var getUrl = 'https://api.freebysquare.sk/pay/v1/generate-png-v2?size=200&color=3&transparent=true&payments=[{"amount":' + sum + ',"currencyCode":"' + moneytype + '","paymentDueDate":"' + paymentDueDate + '","variableSymbol":"' + vs + '","constantSymbol":"' + ks + '","specificSymbol":"' + ss + '","paymentNote":"' + info_name + '","beneficiaryName":"' + name + '","beneficiaryAddressLine1":"' + adress + '","beneficiaryAddressLine2":"' + adress2 + '","bankAccounts":[{"iban":"' + iban + '","bic":null}]}]';
+
+    // Získanie hodnoty z pola date_iban
+    var date_iban = $('#preview_date_iban').val();
+     // Preformátovanie na 'YYYYMMDD' tak ako to API vyžaduje
+    var paymentDueDate = date_iban ? date_iban.replace(/-/g, '') : '';
 
     // Vytvorenie JSON dát pre POST request podľa dokumentácii API
     var postData = {
@@ -426,7 +427,7 @@ $paymentDueDate = date('Ymd', strtotime($date)); // preformátovanie na 'YYYYMMD
         {
           "amount": sum,
           "currencyCode": moneytype,
-          "paymentDueDate": "<?php echo $paymentDueDate; ?>",
+          "paymentDueDate": paymentDueDate,
           "variableSymbol": vs,
           "constantSymbol": ks,
           "specificSymbol": ss,
