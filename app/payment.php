@@ -11,7 +11,7 @@
         if (empty($_POST['sum'])){
             $sumErr = 'Suma je potrebná';
         }else{
-            $sum = filter_input(INPUT_POST, 'sum', FILTER_SANITIZE_NUMBER_INT);
+            $sum = filter_input(INPUT_POST, 'sum', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         }
 
         // Overiť IBAN
@@ -56,7 +56,7 @@
             // Pridať do databázy (id_používateľa, id_iban-u, suma, vs, ks, mena, meno, sprava pre príjemcu, adresa1, adresa2, dátum)
             $sql = "INSERT INTO payment (payment_id, iban_id, sum, vs, ss, ks, moneytype, name, info_name, adress, adress2, date_iban) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("iiisssssssss", $user_id, $iban_id, $sum, $vs, $ss, $ks, $moneytype, $name, $info_name, $adress, $adress2, $date_iban);
+            $stmt->bind_param("iidsssssssss", $user_id, $iban_id, $sum, $vs, $ss, $ks, $moneytype, $name, $info_name, $adress, $adress2, $date_iban);
 
             if ($stmt->execute()){
                 // Úspech
@@ -167,7 +167,7 @@
     <div class="col-md-6">
         <div class="mb-3">
         <label for="sum" class="form-label">Suma</label>
-        <input type="number" class="form-control <?php echo !$sumErr ?: 'is-invalid';?>" id="sum" name="sum" placeholder="10.00" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="number" step="0.01" class="form-control <?php echo !$sumErr ?: 'is-invalid';?>" id="sum" name="sum" placeholder="10.00" <?php echo $loggedUser ? '' : 'disabled'; ?>>
         <div class="invalid-feedback">
           <?php echo $sumErr; ?>
         </div>
@@ -223,7 +223,7 @@
 
 <!-- Modálne okno pre zobrazenie uložených platieb -->
 <div class="modal fade" id="paymentsModal" tabindex="-1" role="dialog" aria-labelledby="paymentsModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="paymentsModalLabel">Uložené platby</h5>
@@ -233,13 +233,15 @@
           <div class="row">
             <?php foreach ($savedPayments as $payment): ?>
               <div class="col-md-6 mb-4">
-                <div class="card mb-4 h-100" style="padding: 10px; margin-bottom: 10px;">
+                <div class="card mb-4 h-100" style="padding: 10px; margin-bottom: 10px; border-radius: 15px; border-width: medium; border-color: lightgrey;">
                   <div class="card-body">
                     <h5 class="card-title">Uložená platba</h5>
                     <p style="font-size: 0.8em;">
                       Platba: <?= htmlspecialchars($payment['id']) ?><br>
                       <?php $ibanId = $payment['iban_id'];
-                      echo 'IBAN: '. ($payment['iban_id'] ? htmlspecialchars($savedIBANs[$payment['iban_id']]): '') . '<br>'; ?>
+                      $iban = $payment['iban_id'] ? $savedIBANs[$payment['iban_id']] : '';
+                      $formattedIban = formatIBAN($iban);
+                      echo 'IBAN: '. ($ibanId ? htmlspecialchars($formattedIban) : '') . '<br>'; ?>
                       Suma: <?= $payment['sum'] ? htmlspecialchars($payment['sum']): '' ?><br>
                       VS: <?= $payment['vs'] ? htmlspecialchars($payment['vs']): '' ?><br>
                       KS: <?= $payment['ks'] ? htmlspecialchars($payment['ks']): '' ?><br>
