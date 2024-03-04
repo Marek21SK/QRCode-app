@@ -26,6 +26,7 @@ CREATE TABLE `iban` (
   `id` int NOT NULL AUTO_INCREMENT,
   `iban` varchar(50) NOT NULL,
   `iban_id` int NOT NULL,
+  `iban_name` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `id_idx` (`iban_id`),
