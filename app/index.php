@@ -19,32 +19,9 @@ if (isset($_SESSION['user_id'])) {
       echo '<div class="d-grid gap-2">
             <form action="/qrcode-app/app/logout.php" method="POST">
                 <button type="submit" class="btn btn-dark">Odhlásit</button>
-            </form><br>
+            </form>
             </div>
             </div>';
-      // Získanie IBAN-ov aktuálne prihláseného používateľa
-      $sql = "SELECT iban FROM iban WHERE iban_id = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("i", $user_id);
-      $stmt->execute();
-      $result = $stmt->get_result();
-
-      if ($result->num_rows > 0) {
-        echo '<div style="width: 50%; margin: auto;">
-              <table class="table table-bordered">
-              <thead>
-              <tr><th scope="col" style="width: 40%;">IBAN</th><th scope="col" style="width: 60%;">Použitie</th></tr>
-              </thead>
-              <tbody>';
-        while($row = $result->fetch_assoc()) {
-            $formattedIBAN = formatIBAN($row["iban"]);
-            echo "<tr><td id='iban'>" . $formattedIBAN. "</td><td>" . "Tu musím dostať na čo slúži daný IBAN" . "</td></tr>";
-        }
-        echo '</tbody></table></div>';
-    } else {
-        echo "Žiadne IBAN-y pre zobrazenie.";
-    }
-
   } else {
       echo "Chyba pri získavaní informácií o užívateľovi.";
   }
@@ -57,13 +34,6 @@ if (isset($_SESSION['user_id'])) {
 
   if (isset($_SESSION['success1'])) { 
     echo '<br><div class="alert alert-success" role="alert">' . $_SESSION['success1'] . '</div>'; unset($_SESSION['success1']);}?>
-
-<?php
-// Funkcia na zobrazenie IBAN s medzerami po 4 znakoch
-function formatIBAN($iban) {
-  $formattedIBAN = chunk_split($iban, 4, ' ');
-  // Odstránenie medzery na konci
-  return rtrim($formattedIBAN);}?>
 
 <!-- Skript na schovanie alertu po určitom čase -->
 <script>
@@ -80,8 +50,6 @@ function formatIBAN($iban) {
         <div class="mb-3" style="text-align: center;">
           <label style="text-align: center;" for="iban" class="form-label">Zadajte IBAN:</label>
           <input style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="iban" name="iban" placeholder="SK88 8888 8888 8888 8888 8888" maxlength="29" required>
-          <label style="text-align: center;" for="iban_name" class="form-label">Zadajte názov daného IBAN-u:</label>
-          <textarea style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="iban_name" name="iban_name" placeholder="Tu si môžete vložiť na čo slúži daný IBAN" rows="3" maxlength="255" required></textarea>
           <!-- Skript, ktorý pri pridávaní IBAN-u sa zobrazí tak, že každé 4 znaky dá medzeru pre lepšie skontrolovanie -->
           <script>
             document.getElementById('iban').addEventListener('input', function(event){
