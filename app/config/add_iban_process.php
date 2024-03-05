@@ -41,6 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Spracovanie nového IBAN-u
     $iban = $_POST['iban'];
+    $iban_name = $_POST['iban_name'];
     $user_id = $_SESSION['user_id'];
 
     // IBAN sa do databázy uloží bez medzier
@@ -88,9 +89,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Vloženie nového IBAN do databázy
-    $sql = "INSERT INTO iban (iban_id, iban) VALUES (?, ?)";
+    $sql = "INSERT INTO iban (iban_id, iban, iban_name) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("is", $user_id, $iban);
+    $stmt->bind_param("iss", $user_id, $iban, $iban_name);
 
     if ($stmt->execute()) {
         $_SESSION['success3'] = "IBAN bol úspešne pridaný.";
