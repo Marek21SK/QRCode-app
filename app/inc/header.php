@@ -21,13 +21,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/qrcode-app/app/index.php">IBAN</a>
+            <a class="nav-link" href="index.php">IBAN</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/qrcode-app/app/payment.php">Zdieľanie platby</a>
+            <a class="nav-link" href="payment.php">Zdieľanie platby</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/qrcode-app/app/about.php">O apke</a>
+            <a class="nav-link" href="about.php">O apke</a>
           </li>
           <?php 
               if (isset($_SESSION['user_id'])){
@@ -49,7 +49,7 @@
               } else {
                 // Používateľ nie je prihlásený, zobrazíme odkaz na prihlásenie alebo registráciu
                 echo '<li class="nav-item" style="background-color: #cccccc; border-radius: 5px;">
-                        <a class="nav-link" href="/qrcode-app/app/login.php" style="font-weight: bold; color: #000;">Registrácia | Prihlásenie</a>
+                        <a class="nav-link" href="login.php" style="font-weight: bold; color: #000;">Registrácia | Prihlásenie</a>
                     </li>';}
           ?>
         </ul>

@@ -5,7 +5,7 @@ $configData = file_get_contents(__DIR__ . '/data.json');
 $config = json_decode($configData, true);
 
 //Priradenie hodnôt z konfiguračného súboru
-$servername = $config["DB_HOST"];
+$servername = "db"; // Názov kontajneru MySQL serveru v Dockeri
 $username = $config["DB_USERNAME"];
 $password = $config["DB_PASSWORD"];
 $dbname = $config["DB_NAME"];
