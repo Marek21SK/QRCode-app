@@ -289,7 +289,7 @@
     $('#preview_adress').val(selectedPayment.adress);
     $('#preview_adress2').val(selectedPayment.adress2);
 
-    $('previewModal').modal('show');
+    $('#previewModal').modal('show');
 
     generateQRCode();
   } 
@@ -406,6 +406,29 @@
       alert("Nie je možné vygenerovať QR kód, pokiaľ nie je zadaný IBAN, suma a mena danej platby.");
       return;
     }
+
+    // Funkcia na zrušenie hodnôt vo formulári aby sa pri ďalšom otvorení modálneho okna nezobrazovali predchádzajúce hodnoty
+    function resetForm() {
+      $('#preview_payment_id').val('');
+      $('#preview_moneytype').val('');
+      $('#preview_ks').val('');
+      $('#preview_sum').val('');
+      $('#preview_vs').val('');
+      $('#preview_ss').val('');
+      $('#preview_date_iban').val('');
+      $('#preview_info_name').val('');
+      $('#preview_name').val('');
+      $('#preview_adress').val('');
+      $('#preview_adress2').val('');
+    }
+
+    // Skript na zavretie modálneho okna
+    $('#previewModal').on('hidden.bs.modal', function () {
+      resetForm();
+      $('#previewModal .modal-body img').remove();
+      $('#qrPrompt2').hide();
+      $('#qrPrompt').show();
+    });
 
     // Vymazanie starého QR kódu po aktualizovaní formuláru vygenerovaním nového QR kódu
     $('#previewModal .modal-body img').remove();
