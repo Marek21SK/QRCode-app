@@ -17,7 +17,7 @@ if (isset($_SESSION['user_id'])) {
       echo '<div class="container mt-5 d-flex flex-column align-items-center justify-content-center">';
       echo "<h2 class='mb-4'>Vitajte, používateľ: <strong>$nickname</strong></h2>";
       echo '<div class="d-grid gap-2">
-            <form action="/qrcode-app/app/logout.php" method="POST">
+            <form action="logout.php" method="POST">
                 <button type="submit" class="btn btn-dark">Odhlásit</button>
             </form><br>
             </div>
@@ -44,7 +44,7 @@ if (isset($_SESSION['user_id'])) {
         }
         echo '</tbody></table></div>';
     } else {
-        echo "Žiadne IBAN-y pre zobrazenie.";
+        echo '<h5>Prehľad IBAN-ov je prázdny.</h5><br>';
     }
   } else {
       echo "Chyba pri získavaní informácií o užívateľovi.";
