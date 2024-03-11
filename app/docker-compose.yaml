@@ -13,8 +13,7 @@ services:
       - db
   db: 
     container_name: mysql-db-qrcode-app
-    image: mysql:5.7
-    restart: always
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}

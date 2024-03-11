@@ -8,8 +8,13 @@ COPY . .
 
 # Install dependencies (if any)
 RUN apt-get update && \
-    apt-get install -y libpng-dev default-libmysqlclient-dev && \
-    docker-php-ext-install pdo pdo_mysql gd mysqli
+    apt-get install -y \ 
+    libpng-dev \ 
+    default-libmysqlclient-dev \ 
+    libzip-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    docker-php-ext-install pdo pdo_mysql gd mysqli bcmath
 
 # Expose the necessary ports
 EXPOSE 80
