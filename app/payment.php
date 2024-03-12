@@ -129,6 +129,7 @@
 <!-- Formulár pre všetky inputy -->
 <form action="payment.php" method="POST" class="mt-4 w-75">
   <div class="row">
+  <h3 class="display-8 mx-auto d-flex justify-content-center align-items-center;">Formulár na pridanie novej platby</h3><hr>
     <div class="col-md-6">
       <div class="mb-3">
         <label for="payment_id" class="form-label">IBAN</label>
