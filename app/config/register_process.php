@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($checkEmailResult->num_rows > 0){
         // Email už existuje, zobraz chybovú hlášku
         $_SESSION['error3'] = "Tento email sa už používa, zadajte iný email";
-        header("Location: /qrcode-app/app/login.php");
+        header("Location: ../login.php");
         exit();
     }else{
         // Heslo zahashovať
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt->execute()) {
             $_SESSION['success'] = "Registrácia prebehla úspešne!";
-            header("Location: /qrcode-app/app/login.php");
+            header("Location: ../login.php");
             exit();
         } else {
             echo "Error: " . $stmt->error;

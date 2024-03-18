@@ -21,7 +21,7 @@
     <div class="container mt-4 d-flex flex-column align-items-center justify-content-center">
       <div style="display: contents;">
         <h5 style="font-weight: bold;">Vitajte, používateľ: <strong><?php echo $nickname; ?></strong></h5>
-        <form action="/qrcode-app/app/logout.php" method="POST">
+        <form action="logout.php" method="POST">
           <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center" style="height: 25px;">
             <span style="line-height: 10px;">Odhlásiť</span>
           </button>
@@ -75,6 +75,7 @@
           ?>
         </div>
       </div>
+
 
       <!-- Formulár na pridanie IBAN -->
       <div class="row mt-3">

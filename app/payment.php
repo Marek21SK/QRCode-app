@@ -61,7 +61,7 @@
 
             if ($stmt->execute()){
                 // Úspech
-                header('Location: index.php');
+                header('Location: ../index.php');
             }else {
                 // Chyba
                 echo 'Error: ' . $stmt->error;
@@ -235,13 +235,17 @@
         </div>
         <div class="modal-body" id="paymentsModalBody">
           <div class="row row-cols-1 row-cols-md-2 g-4">
+          <?php if (empty($savedPayments)): ?>
+            <h4 class="text-center">Momentálne nemáte žiadnu uloženú platbu</h4>
+            <?php else: ?>
+          <div class="row">
             <?php foreach ($savedPayments as $payment): ?>
               <div class="col-md-4 mb-4">
                 <div class="card mb-4 h-100" id="modal-card">
                   <div class="card-body" id="card-body">
                     <h5 class="card-title">Uložená platba</h5>
                     <p id="payment-data">
-                      Platba: <?= htmlspecialchars($payment['id']) ?><br>
+                    <p style="font-size: 0.8em;">
                       <?php $ibanId = $payment['iban_id'];
                       $iban = $payment['iban_id'] ? $savedIBANs[$payment['iban_id']] : '';
                       $formattedIban = formatIBAN($iban);
@@ -263,6 +267,7 @@
               </div>
             <?php endforeach; ?>
           </div>
+          <?php endif; ?>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Zavrieť</button>

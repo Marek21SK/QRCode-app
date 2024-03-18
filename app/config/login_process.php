@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     // Kontrola, či už je používateľ prihlásený
     if (isset($_SESSION['user_id'])) {
         $_SESSION['error'] = "Už ste prihlásený/á | Najprv sa odhláste pre nové prihlásenie.";
-        header("Location: /qrcode-app/app/login.php");
+        header("Location: ../login.php");
         exit();
     }
 
@@ -23,6 +23,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     // Príprava SQL dotazu pre parameter s (reťazec)
     $sql = "SELECT id, email, password FROM users WHERE email = ?";
     $stmt = $conn->prepare($sql);
+    // Kontrola chyby pri príprave dotazu
+    if (!$stmt) {
+        die('Chyba pri príprave dotazu: ' . $conn->error);
+    }
+
+    // Bindovanie parametrov
+    if (!$stmt->bind_param("s", $email)) {
+        die('Chyba pri bindovaní parametrov: ' . $stmt->error);
+    }
     $stmt->bind_param("s", $email);
 
     // Vykonanie a získanie výsledkov
@@ -37,15 +46,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         if (password_verify($password, $passwordHash)){
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['success1'] = "Úspešne ste sa prihlásili";
-            header("Location: /qrcode-app/app/index.php");
+            header("Location: ../index.php");
             exit();
         } else {
             $_SESSION['error'] = "Zadali ste nesprávný email alebo heslo";
-            header("Location: /qrcode-app/app/login.php");
+            header("Location: ../login.php");
         }
     } else {
         $_SESSION['error2'] = "Užívateľ s týmto emailom neexistuje";
-        header("Location: /qrcode-app/app/login.php");
+        header("Location: ../login.php");
     }
 }
 ?>
