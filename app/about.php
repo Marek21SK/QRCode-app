@@ -1,6 +1,8 @@
 <?php include 'inc/header.php'; ?>
+<style> <?php include 'styles/style.css'; ?> </style>
 
 <div class="container mt-5 text-center">
+    <div class="custom-container">
     <h1 class="display-4">QR Code App</h1>
     <p class="lead">Táto aplikácia vám umožňuje jednoducho generovať a zdieľať QR kódy pre platby.</p>
 
@@ -29,5 +31,6 @@
 
     <h2 class="mt-5">Kontaktujte nás</h2>
     <p class="lead">Ak máte akékoľvek otázky alebo problémy, kontaktujte nás na <a href="mailto:info@qrcodeapp.sk">info@qrcodeapp.sk</a></p>
+    </div>
 </div>
 <?php include 'inc/footer.php'; ?>
