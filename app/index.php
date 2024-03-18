@@ -26,6 +26,9 @@
             <span style="line-height: 10px;">Odhlásiť</span>
           </button>
         </form><br>
+        <?php if (isset($_SESSION['success1'])) {
+            echo '<div class="alert alert-success" role="alert">' . $_SESSION['success1'] . '</div>';
+            unset($_SESSION['success1']);} ?>
       </div>
     </div>
 
@@ -147,10 +150,6 @@
 <?php else : ?>
   <div class="container mt-5 d-flex flex-column align-items-center justify-content-center">
     <h4><strong>Vitajte v aplikácií QRCode.</strong></h4>
-    <?php if (isset($_SESSION['success1'])) {
-      echo '<br><div class="alert alert-success" role="alert">' . $_SESSION['success1'] . '</div>';
-      unset($_SESSION['success1']);
-    } ?>
   </div>
 <?php endif; ?>
 
