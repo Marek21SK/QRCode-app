@@ -1,5 +1,6 @@
 <?php include 'inc/header.php'; ?>
 <?php include 'config/database.php'; ?>
+<style><?php include 'styles/style.css';?></style>
 
 <!-- Kontrola, či je používateľ prihlásený -->
 <?php if (isset($_SESSION['user_id'])) : ?>
@@ -16,17 +17,21 @@
     $row = $result->fetch_assoc();
     $nickname = $row['nickname'];
     ?>
-    <div class="container mt-5 d-flex flex-column align-items-center justify-content-center">
-      <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="index-custom container d-flex flex-column align-items-center justify-content-center">
+    <div class="container mt-4 d-flex flex-column align-items-center justify-content-center">
+      <div style="display: contents;">
         <h5 style="font-weight: bold;">Vitajte, používateľ: <strong><?php echo $nickname; ?></strong></h5>
         <form action="/qrcode-app/app/logout.php" method="POST">
-          <button type="submit" class="btn btn-danger" style="margin-left: 15px;">Odhlásit</button>
+          <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center" style="height: 25px;">
+            <span style="line-height: 10px;">Odhlásiť</span>
+          </button>
         </form><br>
       </div>
     </div>
 
-    <div class="container mt-3">
-      <div class="row">
+    <div class="container" style="margin-bottom: 10px;">
+    <button class="toggleButton btn btn-primary mx-auto d-flex justify-content-center align-items-center" style="height: 25px; font-size: 0.6rem; text-align: left;">Otvoriť prehľad IBAN-ov</button>
+      <div class="row" style="display: none;"><br>
         <div class="col-md-12">
           <!-- Zobrazenie prehľadu IBAN-ov -->
           <?php
@@ -65,7 +70,7 @@
             </div>
           <?php
           } else {
-            echo "Žiadne IBAN-y pre zobrazenie.";
+            echo "<div class='mx-auto d-flex justify-content-center align-items-center'>Žiadne IBAN pre zobrazenie.</div>";
           }
           ?>
         </div>
@@ -82,8 +87,8 @@
                     <div class="mb-3">
                       <label for="add_iban" class="form-label">Zadajte IBAN:</label>
                       <input style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="add_iban" name="iban" placeholder="SK88 8888 8888 8888 8888 8888" maxlength="29" required>
-                      <label for="iban_name" class="form-label">Zadajte názov daného IBAN-u:</label>
-                      <textarea style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="iban_name" name="iban_name" placeholder="Tu si môžete vložiť na čo slúži daný IBAN" rows="3" maxlength="255" required></textarea>
+                      <label for="iban_name" class="form-label">Popis IBAN-u:</label>
+                      <textarea style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="iban_name" name="iban_name" placeholder="Prosím, uveďte účel použitia tohto IBAN" rows="3" maxlength="255" required></textarea>
                       <!-- Skript, ktorý pri pridávaní IBAN-u sa zobrazí tak, že každé 4 znaky dá medzeru pre lepšie skontrolovanie -->
                       <script>
                         document.getElementById('add_iban').addEventListener('input', function (event) {
@@ -132,6 +137,7 @@
         </div>
       </div>
     </div>
+    </div>
   <?php
   } else {
     echo "Chyba pri získavaní informácií o užívateľovi.";
@@ -157,6 +163,22 @@ function formatIBAN($iban)
   return rtrim($formattedIBAN);
 }
 ?>
+
+<!-- Skript na zobrazenie/skrytie IBAN-ov -->
+<script>
+  document.querySelectorAll(".toggleButton").forEach(function(button) {
+    button.addEventListener("click", function() {
+      var content = this.nextElementSibling;
+      if (content.style.display === "none") {
+        content.style.display = "block";
+        this.textContent = "Zatvoriť prehľad IBAN-ov";
+      } else {
+        content.style.display = "none";
+        this.textContent = "Otvoriť prehľad IBAN-ov";
+      }
+    });
+  });
+</script>
 
 <!-- Skript na schovanie alertu po určitom čase -->
 <script>
