@@ -1,6 +1,7 @@
-<?php 
-    include 'inc/header.php';
-    include 'config/database.php';
+<?php include 'inc/header.php';?>
+<?php include 'config/database.php';?>
+<style><?php include 'styles/style.css';?></style>
+<?php
 
     $sum = $selectIBAN = $moneytype = "";
     $sumErr = $ibanErr = $moneytypeErr = "";
@@ -22,7 +23,7 @@
           $iban = filter_input(INPUT_POST, 'payment_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         
           // Získanie id pre vybraný IBAN od používateľa, ktorý v poradí pridal daný IBAN
-          $getIBANid = "SELECT iban.id FROM iban INNER JOIN users ON iban.iban_id = users.id WHERE iban.iban = ? AND iban.iban_id = ?"; //"SELECT id FROM iban WHERE iban = ?";
+          $getIBANid = "SELECT iban.id FROM iban INNER JOIN users ON iban.iban_id = users.id WHERE iban.iban = ? AND iban.iban_id = ?";
           $stmt = $conn->prepare($getIBANid);
           $stmt->bind_param("si", $iban, $user_id);
           $stmt->execute();
@@ -127,8 +128,10 @@
 ?>
 
 <!-- Formulár pre všetky inputy -->
+<div class="payment-container container d-flex flex-column align-items-center">
 <form action="payment.php" method="POST" class="mt-4 w-75">
   <div class="row">
+  <h3 class="form-title display-8 mx-auto">Formulár na pridanie novej platby</h3><hr>
     <div class="col-md-6">
       <div class="mb-3">
         <label for="payment_id" class="form-label">IBAN</label>
@@ -210,35 +213,38 @@
     </div>
   </div>
   
-  <div class="mb-3 d-flex justify-content-between">
+  <div class="button-container">
   <?php if ($loggedUser): ?>
-    <input type="submit" name="submit" value="Uložiť platbu" class="btn btn-primary ms-auto mx-2" style="width: 450px;">
-    <button type="button" class="btn btn-secondary me-auto mx-2" data-bs-toggle="modal" data-bs-target="#previewModal" style="width: 450px;" onclick="generateQRCode()">Ukážka</button>
-    <button type="button" class="btn btn-info me-auto mx-2" data-bs-toggle="modal" data-bs-target="#paymentsModal" style="width: 450px;">Zobraziť uložené platby</button>
+    <input type="submit" name="submit" value="Uložiť platbu" class="btn btn-primary custom-btn">
+    <button type="button" class="btn btn-secondary custom-btn" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="generateQRCode()">Ukážka</button>
+    <button type="button" class="btn btn-info custom-btn" data-bs-toggle="modal" data-bs-target="#paymentsModal">Zobraziť uložené platby</button>
     <?php else: ?>
       <h5 class="text-center mx-auto">Pre prácu s týmto formulárom musíte byť prihlásený</h5>
     <?php endif; ?>
   </div>
 </form>
+</div>
 
 <!-- Modálne okno pre zobrazenie uložených platieb -->
 <div class="modal fade" id="paymentsModal" tabindex="-1" role="dialog" aria-labelledby="paymentsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="paymentsModalLabel">Uložené platby</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="paymentsModalBody">
+          <div class="row row-cols-1 row-cols-md-2 g-4">
           <?php if (empty($savedPayments)): ?>
             <h4 class="text-center">Momentálne nemáte žiadnu uloženú platbu</h4>
             <?php else: ?>
           <div class="row">
             <?php foreach ($savedPayments as $payment): ?>
-              <div class="col-md-6 mb-4">
-                <div class="card mb-4 h-100" style="padding: 10px; margin-bottom: 10px; border-radius: 15px; border-width: medium; border-color: lightgrey;">
-                  <div class="card-body">
+              <div class="col-md-4 mb-4">
+                <div class="card mb-4 h-100" id="modal-card">
+                  <div class="card-body" id="card-body">
                     <h5 class="card-title">Uložená platba</h5>
+                    <p id="payment-data">
                     <p style="font-size: 0.8em;">
                       <?php $ibanId = $payment['iban_id'];
                       $iban = $payment['iban_id'] ? $savedIBANs[$payment['iban_id']] : '';
@@ -255,7 +261,7 @@
                       Splatnosť: <?= $payment['date_iban'] ? date('Y-m-d', strtotime($payment['date_iban'])) : '' ?><br>
                       Informácia: <?= $payment['info_name'] ? htmlspecialchars($payment['info_name']): '' ?><br>
                     </p> 
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#previewModal" data-paymentid="<?= $payment['id']; ?>" style="height: 25px; font-size: 0.6rem; text-align: left;" class="btn btn-primary load-payment-btn" onclick="loadAndShowPreview(<?= $payment['id']; ?>)">Načítať platbu do ukážky</button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#previewModal" data-paymentid="<?= $payment['id']; ?>" id="previewModal-button" class="btn btn-primary load-payment-btn" onclick="loadAndShowPreview(<?= $payment['id']; ?>)">Načítať platbu do ukážky</button>
                   </div>
                 </div>
               </div>
@@ -292,7 +298,7 @@
     $('#preview_adress').val(selectedPayment.adress);
     $('#preview_adress2').val(selectedPayment.adress2);
 
-    $('previewModal').modal('show');
+    $('#previewModal').modal('show');
 
     generateQRCode();
   } 
@@ -300,7 +306,7 @@
 
 <!-- Modálne okno pre zobrazenie ukážky -->
 <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-lg">
+<div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="previewModalLabel">Ukážka údajov</h5>
@@ -409,6 +415,29 @@
       alert("Nie je možné vygenerovať QR kód, pokiaľ nie je zadaný IBAN, suma a mena danej platby.");
       return;
     }
+
+    // Funkcia na zrušenie hodnôt vo formulári aby sa pri ďalšom otvorení modálneho okna nezobrazovali predchádzajúce hodnoty
+    function resetForm() {
+      $('#preview_payment_id').val('');
+      $('#preview_moneytype').val('');
+      $('#preview_ks').val('');
+      $('#preview_sum').val('');
+      $('#preview_vs').val('');
+      $('#preview_ss').val('');
+      $('#preview_date_iban').val('');
+      $('#preview_info_name').val('');
+      $('#preview_name').val('');
+      $('#preview_adress').val('');
+      $('#preview_adress2').val('');
+    }
+
+    // Skript na zavretie modálneho okna
+    $('#previewModal').on('hidden.bs.modal', function () {
+      resetForm();
+      $('#previewModal .modal-body img').remove();
+      $('#qrPrompt2').hide();
+      $('#qrPrompt').show();
+    });
 
     // Vymazanie starého QR kódu po aktualizovaní formuláru vygenerovaním nového QR kódu
     $('#previewModal .modal-body img').remove();
