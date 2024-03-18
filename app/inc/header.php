@@ -1,7 +1,5 @@
-<?php include 'config/common.php';
-      include 'config/database.php';?>
-<style><?php include 'styles/style.css';?></style>
-
+<?php include 'config/common.php'; ?>
+<?php include 'config/database.php';?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/style.css"> 
   <title>Zdieľanie platby</title>
 </head>
 <body>
@@ -25,13 +24,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/qrcode-app/app/index.php">IBAN</a>
+            <a class="nav-link" href="index.php">IBAN</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/qrcode-app/app/payment.php">Zdieľanie platby</a>
+            <a class="nav-link" href="payment.php">Zdieľanie platby</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/qrcode-app/app/about.php">O apke</a>
+            <a class="nav-link" href="about.php">O apke</a>
           </li>
           <?php 
               if (isset($_SESSION['user_id'])){
@@ -53,7 +52,7 @@
               } else {
                 // Používateľ nie je prihlásený, zobrazíme odkaz na prihlásenie alebo registráciu
                 echo '<li class="nav-item" style="background-color: #cccccc; border-radius: 5px;">
-                        <a class="nav-link" href="/qrcode-app/app/login.php" style="font-weight: bold; color: #000;">Registrácia | Prihlásenie</a>
+                        <a class="nav-link" href="login.php" style="font-weight: bold; color: #000;">Registrácia | Prihlásenie</a>
                     </li>';}
           ?>
         </ul>

@@ -1,6 +1,5 @@
 <?php include 'inc/header.php'; ?>
 <?php include 'config/database.php'; ?>
-<style><?php include 'styles/style.css';?></style>
 
 <!-- Kontrola, či je používateľ prihlásený -->
 <?php if (isset($_SESSION['user_id'])) : ?>
@@ -21,11 +20,14 @@
     <div class="container mt-4 d-flex flex-column align-items-center justify-content-center">
       <div style="display: contents;">
         <h5 style="font-weight: bold;">Vitajte, používateľ: <strong><?php echo $nickname; ?></strong></h5>
-        <form action="/qrcode-app/app/logout.php" method="POST">
+        <form action="logout.php" method="POST">
           <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center" style="height: 25px;">
             <span style="line-height: 10px;">Odhlásiť</span>
           </button>
         </form><br>
+        <?php if (isset($_SESSION['success1'])) {
+            echo '<div class="alert alert-success" role="alert">' . $_SESSION['success1'] . '</div>';
+            unset($_SESSION['success1']);} ?>
       </div>
     </div>
 
@@ -147,10 +149,6 @@
 <?php else : ?>
   <div class="container mt-5 d-flex flex-column align-items-center justify-content-center">
     <h4><strong>Vitajte v aplikácií QRCode.</strong></h4>
-    <?php if (isset($_SESSION['success1'])) {
-      echo '<br><div class="alert alert-success" role="alert">' . $_SESSION['success1'] . '</div>';
-      unset($_SESSION['success1']);
-    } ?>
   </div>
 <?php endif; ?>
 

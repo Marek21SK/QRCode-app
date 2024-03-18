@@ -1,7 +1,7 @@
-<?php include 'inc/header.php';?>
-<?php include 'config/database.php';?>
-<style><?php include 'styles/style.css';?></style>
 <?php
+ob_start(); 
+include 'inc/header.php';
+include 'config/database.php';
 
     $sum = $selectIBAN = $moneytype = "";
     $sumErr = $ibanErr = $moneytypeErr = "";
@@ -125,7 +125,7 @@
       // Odstránenie medzery na konci
       return rtrim($formattedIBAN);
     }
-?>
+ob_end_flush();?>
 
 <!-- Formulár pre všetky inputy -->
 <div class="payment-container container d-flex flex-column align-items-center">
