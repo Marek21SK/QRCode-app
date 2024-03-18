@@ -1,5 +1,7 @@
 <?php include 'config/common.php';
       include 'config/database.php';?>
+<style><?php include 'styles/style.css';?></style>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
