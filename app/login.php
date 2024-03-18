@@ -2,7 +2,6 @@
 <?php include 'config/login_process.php';?>
 <?php include 'config/register_process.php';?>
 <?php include 'config/database.php';?>
-<style><?php include 'styles/style.css';?></style>
 
 <!-- Skript na schovanie alertu po určitom čase -->
 <script>
@@ -12,7 +11,7 @@
 </script>
 
 <!-- Prihlásenie -->
-<div class="container container-custom mt-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
@@ -45,15 +44,12 @@
         <!-- Registrácia - Zobrazenie v modálnom one -->
         <div class="col-md-6">
             <div class="card">
-                <div class="card-body text-center">
+                <div class="card-body">
                     <h3 class="card-title text-center">Registration - Registrácia</h3>
                     <!-- Odkaz na zobrazenie modálneho okna -->
-                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#registrationModal" style="margin-top: 10px;">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registrationModal">
                         Registrovať sa
                     </button>
-                    <div class="mt-3 text-center">
-                        <h7>Nemáte účet? Zaregistrujte sa a získajte úplný prístup k funkciám aplikácie.</h7>
-                    </div>
                 </div>
                 <div class="d-grid">
                     <?php if (isset($_SESSION['error3'])) { 
