@@ -2,7 +2,6 @@
 <?php include 'config/login_process.php';?>
 <?php include 'config/register_process.php';?>
 <?php include 'config/database.php';?>
-<style><?php include 'styles/style.css';?></style>
 
 <!-- Skript na schovanie alertu po určitom čase -->
 <script>

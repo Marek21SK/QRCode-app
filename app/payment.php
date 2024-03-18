@@ -1,6 +1,5 @@
 <?php include 'inc/header.php';?>
 <?php include 'config/database.php';?>
-<style><?php include 'styles/style.css';?></style>
 <?php
 
     $sum = $selectIBAN = $moneytype = "";

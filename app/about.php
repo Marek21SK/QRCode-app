@@ -1,5 +1,4 @@
 <?php include 'inc/header.php'; ?>
-<style> <?php include 'styles/style.css'; ?> </style>
 
 <div class="container mt-5 text-center">
     <div class="custom-container">

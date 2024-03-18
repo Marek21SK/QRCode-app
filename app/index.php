@@ -1,6 +1,5 @@
 <?php include 'inc/header.php'; ?>
 <?php include 'config/database.php'; ?>
-<style><?php include 'styles/style.css';?></style>
 
 <!-- Kontrola, či je používateľ prihlásený -->
 <?php if (isset($_SESSION['user_id'])) : ?>
