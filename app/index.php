@@ -91,14 +91,6 @@
                       <input style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="add_iban" name="iban" placeholder="SK88 8888 8888 8888 8888 8888" maxlength="29" required>
                       <label for="iban_name" class="form-label">Popis IBAN-u:</label>
                       <textarea style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="iban_name" name="iban_name" placeholder="Prosím, uveďte účel použitia tohto IBAN" rows="3" maxlength="255" required></textarea>
-                      <!-- Skript, ktorý pri pridávaní IBAN-u sa zobrazí tak, že každé 4 znaky dá medzeru pre lepšie skontrolovanie -->
-                      <script>
-                        document.getElementById('add_iban').addEventListener('input', function (event) {
-                          var ibanSpaces = event.target.value.replace(/\s/g, '');
-                          var ibanFormat = ibanSpaces.replace(/(.{4})/g, '$1 ').trim();
-                          event.target.value = ibanFormat;
-                        });
-                      </script>
                       <div class="d-grid">
                         <?php if (isset($_SESSION['error4'])) {
                           echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error4'] . '</div>';
@@ -161,6 +153,15 @@ function formatIBAN($iban)
   return rtrim($formattedIBAN);
 }
 ?>
+
+<!-- Skript, ktorý pri pridávaní IBAN-u sa zobrazí tak, že každé 4 znaky dá medzeru pre lepšie skontrolovanie -->
+<script>
+  document.getElementById('add_iban').addEventListener('input', function (event) {
+    var ibanSpaces = event.target.value.replace(/\s/g, '');
+    var ibanFormat = ibanSpaces.replace(/(.{4})/g, '$1 ').trim();
+    event.target.value = ibanFormat;
+  });
+</script>
 
 <!-- Skript na zobrazenie/skrytie IBAN-ov -->
 <script>
