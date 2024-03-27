@@ -88,34 +88,13 @@
 
       return $ibanList;
     }
-    // Funkcia na získanie platby pre aktuálneho používateľa
-    function getSavedPayments($conn, $user_id){
-      $paymentList = array();
-
-      // Príprava SQL dotazu pre získanie platby z databázy
-      $sql = "SELECT * FROM payment WHERE payment_id = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("i", $user_id);
-      $stmt->execute();
-      $result = $stmt->get_result();
-
-      // Načítanie platby do poľa
-      while ($row = $result->fetch_assoc()){
-        $paymentList[] = $row;
-      }
-      $stmt->close();
-
-      return $paymentList;
-    }
 
     // Použitie funkcie či je používateľ prihlásený / zobrazenie IBAN-ov, povolenie písania do inputov / zobrazenie tlačidiel
     $loggedUser = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     if ($loggedUser){
-      $savedPayments = getSavedPayments($conn, $loggedUser);
       $savedIBANs = getSavedIBANs($conn, $loggedUser);
     }else {
       $savedIBANs = array();
-      $savedPayments = array();
     }
 
     // Funkcia na zobrazenie IBAN s medzerami po 4 znakoch
@@ -149,12 +128,12 @@
         </div>
       </div>
 
-      <div class="mb-3">
+      <div class="mb-3"> <!-- Ak by som musel skriť tento HTML element style="display: none;" + na koniec mimo div <input type="hidden" name="moneytype" value="EUR"/> -->
         <label for="moneytype" class="form-label">Mena prevodu</label>
         <select class="form-control <?php echo !$moneytypeErr ?: 'is-invalid';?>" id="moneytype" name="moneytype" <?php echo $loggedUser ? '' : 'disabled'; ?>>
-          <option value="" selected disabled>Vyberte menu prevodu</option>
-          <option value="EUR">EUR</option>
+          <option value="EUR" selected>EUR</option>
         </select>
+        <small>Mena prevodu automaticky nastavená</small>
         <div class="invalid-feedback">
           <?php echo $moneytypeErr; ?>
         </div>
@@ -216,87 +195,12 @@
   <?php if ($loggedUser): ?>
     <input type="submit" name="submit" value="Uložiť platbu" class="btn btn-primary custom-btn">
     <button type="button" class="btn btn-secondary custom-btn" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="generateQRCode()">Ukážka</button>
-    <button type="button" class="btn btn-info custom-btn" data-bs-toggle="modal" data-bs-target="#paymentsModal">Zobraziť uložené platby</button>
     <?php else: ?>
       <h5 class="text-center mx-auto">Pre prácu s týmto formulárom musíte byť prihlásený</h5>
     <?php endif; ?>
   </div>
 </form>
 </div>
-
-<!-- Modálne okno pre zobrazenie uložených platieb -->
-<div class="modal fade" id="paymentsModal" tabindex="-1" role="dialog" aria-labelledby="paymentsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="paymentsModalLabel">Uložené platby</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="paymentsModalBody">
-          <div class="row row-cols-1 row-cols-md-2 g-4">
-            <?php foreach ($savedPayments as $payment): ?>
-              <div class="col-md-4 mb-4">
-                <div class="card mb-4 h-100" id="modal-card">
-                  <div class="card-body" id="card-body">
-                    <h5 class="card-title">Uložená platba</h5>
-                    <p id="payment-data">
-                      Platba: <?= htmlspecialchars($payment['id']) ?><br>
-                      <?php $ibanId = $payment['iban_id'];
-                      $iban = $payment['iban_id'] ? $savedIBANs[$payment['iban_id']] : '';
-                      $formattedIban = formatIBAN($iban);
-                      echo 'IBAN: '. ($ibanId ? htmlspecialchars($formattedIban) : '') . '<br>'; ?>
-                      Suma: <?= $payment['sum'] ? htmlspecialchars($payment['sum']): '' ?><br>
-                      VS: <?= $payment['vs'] ? htmlspecialchars($payment['vs']): '' ?><br>
-                      KS: <?= $payment['ks'] ? htmlspecialchars($payment['ks']): '' ?><br>
-                      ŠS: <?= $payment['ss'] ? htmlspecialchars($payment['ss']): '' ?><br>
-                      Mena: <?= $payment['moneytype'] ? htmlspecialchars($payment['moneytype']): '' ?><br>
-                      Príjemca: <?= $payment['name'] ? htmlspecialchars($payment['name']): '' ?><br>
-                      Adresa 1: <?= $payment['adress'] ? htmlspecialchars($payment['adress']): '' ?><br>
-                      Adresa 2: <?= $payment['adress2'] ? htmlspecialchars($payment['adress2']): '' ?><br>
-                      Splatnosť: <?= $payment['date_iban'] ? date('Y-m-d', strtotime($payment['date_iban'])) : '' ?><br>
-                      Informácia: <?= $payment['info_name'] ? htmlspecialchars($payment['info_name']): '' ?><br>
-                    </p> 
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#previewModal" data-paymentid="<?= $payment['id']; ?>" id="previewModal-button" class="btn btn-primary load-payment-btn" onclick="loadAndShowPreview(<?= $payment['id']; ?>)">Načítať platbu do ukážky</button>
-                  </div>
-                </div>
-              </div>
-            <?php endforeach; ?>
-          </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Zavrieť</button>
-        </div>
-    </div>
-  </div>
-</div>
-
-<!-- Skript na zobrazenie platby v "Ukážka" po stlačení buttonu-->
-<script>
-  function loadAndShowPreview(paymentId){
-    var payment = <?= json_encode($savedPayments); ?>;
-    var selectedPayment = payment.find(p => p.id == paymentId);
-    //console.log(selectedPayment);
-
-    var $savedIBANs = <?= json_encode($savedIBANs); ?>;
-    var formattedDate = moment(selectedPayment.date_iban).format("YYYY-MM-DD");
-
-    $('#preview_payment_id').val($savedIBANs[selectedPayment.iban_id]);
-    $('#preview_moneytype').val(selectedPayment.moneytype);
-    $('#preview_ks').val(selectedPayment.ks);
-    $('#preview_sum').val(selectedPayment.sum);
-    $('#preview_vs').val(selectedPayment.vs);
-    $('#preview_ss').val(selectedPayment.ss);
-    $('#preview_date_iban').val(formattedDate);
-    $('#preview_info_name').val(selectedPayment.info_name);
-    $('#preview_name').val(selectedPayment.name);
-    $('#preview_adress').val(selectedPayment.adress);
-    $('#preview_adress2').val(selectedPayment.adress2);
-
-    $('#previewModal').modal('show');
-
-    generateQRCode();
-  } 
-</script>
 
 <!-- Modálne okno pre zobrazenie ukážky -->
 <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
