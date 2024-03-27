@@ -27,8 +27,25 @@
           <li class="nav-item">
             <a class="nav-link" href="/qrcode-app/app/index.php">IBAN</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item dropdown">
             <a class="nav-link" href="/qrcode-app/app/payment.php">Zdieľanie platby</a>
+            <?php
+              if (isset($_SESSION['user_id'])){
+                $user_id = $_SESSION['user_id'];
+                $sql = "SELECT 1 FROM payment WHERE payment_id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0){
+                  // Používateľ je prihlásený a má uložené platby, zobrazíme dropdown menu
+                  echo '<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <a class="dropdown-item" href="/qrcode-app/app/saved_payments.php">Uložené platby</a>
+                        </div>';
+                }
+                $stmt->close();
+              }?>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/qrcode-app/app/about.php">O apke</a>
