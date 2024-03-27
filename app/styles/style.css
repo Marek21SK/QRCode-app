@@ -91,6 +91,10 @@ h2 {
 .navbar-nav .nav-link {
     font-weight: bold;
 }
+
+.navbar-nav .nav-link:hover {
+    color: #007bff !important;
+}
   
 .navbar-nav .nav-item:last-child {
     margin-right: 0;
@@ -129,6 +133,51 @@ h2 {
   
 .bg-light-black {
     background-color: #333;
+}
+
+#navbarDropdown:hover {
+    color: #007bff;
+    background-color: #f8f9fa;
+  }
+
+.dropdown-menu {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.dropdown-item {
+    font-weight: bold;
+}
+
+.dropdown-item:hover {
+    color: #007bff !important;
+}
+
+.dropdown-item:focus {
+    box-shadow: none !important;
+}
+
+.nav-item.dropdown .dropdown-menu {
+    left: 0;
+    right: 0;
+    width: auto;
+}
+
+.nav-item.dropdown .dropdown-menu {
+    transition: all 0.3s ease-out;
+    opacity: 0;
+    visibility: hidden;
+    transform: scaleY(0);
+    transform-origin: top;
+    display: block;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: scaleY(1);
 }
 /* CSS pre login.php */
 .card {
@@ -250,6 +299,11 @@ h2 {
   }
 }
 
+.small, small {
+    font-size: xx-small;
+    font-style: italic;
+    font-weight: 500;
+}
 /* CSS pre index.php */
 .table-bordered {
   background-color: #ffffff;
