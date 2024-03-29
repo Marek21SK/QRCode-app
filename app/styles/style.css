@@ -277,14 +277,13 @@ h2 {
 }
 
 #previewModal-button{
-  height: 25px; 
-  font-size: 0.6rem; 
-  text-align: left; 
-  margin: -10px;
+  height: auto; 
+  font-size: 0.6rem;
+  text-align: center;
 }
 
 #card-body{
-  height: 300px;
+  height: auto;
 }
 
 #payment-data{
@@ -317,4 +316,67 @@ h2 {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   margin-top: 15px;
   max-width: 1000px;
+}
+/* CSS pre saved_payments.php */
+.btn-success.edit-button{
+  height: auto; 
+  font-size: 0.6rem; 
+  text-align: center; 
+}
+
+.payment{
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.modal-content {
+  background-color: #f8f9fa; 
+  border-radius: 5px;
+}
+
+.modal-title {
+  color: #343a40;
+}
+
+.btn {
+  color: #fff;
+  border: none;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+form {
+  color: #495057;
+}
+
+form input[type="text"], form input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.update-payment-btn {
+  margin-top: 10px;
+}
+
+.btn-danger.delete-button{
+  height: auto; 
+  font-size: 0.6rem; 
+  text-align: center; 
 }
