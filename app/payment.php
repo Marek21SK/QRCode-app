@@ -189,6 +189,7 @@
     <div class="mb-3">
         <label for="adress2" class="form-label">Adresa 2. riadok</label>
         <input type="text" class="form-control <" id="adress2" name="adress2" placeholder="Adresa 2. riadok" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="hidden" id="payment_name" name="payment_name" value="Uložená platba">
     </div>
   </div>
   
@@ -311,7 +312,13 @@
     var adress2 = $('#preview_adress2').val();
 
     if (!iban || !sum || !moneytype || iban === "0" || sum === "0" || moneytype === "0") {
-      alert("Nie je možné vygenerovať QR kód, pokiaľ nie je zadaný IBAN, suma a mena danej platby.");
+      Swal.fire({
+        title: 'Chyba!',
+        text: 'Nie je možné vygenerovať QR kód, pokiaľ nie je zadaný IBAN, suma a mena danej platby.',
+        icon: 'error',
+      }).then(() => {
+        $('#previewModal').modal('hide');
+      });
       return;
     }
 
@@ -398,7 +405,14 @@
       }
     };
     xhr.onerror = function() {
-      alert('Chyba pri generovaní QR kódu, skúste to prosím neskôr.');
+      Swal.fire({
+        title: 'Chyba!',
+        text: 'Chyba pri generovaní QR kódu, skúste to prosím neskôr.',
+        icon: 'error',
+        footer: '<a href="#">Prečo mi vyskočila táto chyba?</a>',
+      }).then(() => {
+        $('#previewModal').modal('hide');
+      });
     };
     xhr.send(JSON.stringify(postData));
   }
