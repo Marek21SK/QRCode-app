@@ -49,14 +49,15 @@
           $adress = !empty($_POST['adress']) ? $_POST['adress'] : NULL;
           $adress2 = !empty($_POST['adress2']) ? $_POST['adress2'] : NULL;
           $date_iban = !empty($_POST['date_iban']) ? $_POST['date_iban'] : NULL;
+          $payment_name = !empty($_POST['payment_name']) ? $_POST['payment_name'] : NULL;
         
             // Predpokladáme, že používateľ je prihlásený
             $user_id = $_SESSION['user_id'];
             
             // Pridať do databázy (id_používateľa, id_iban-u, suma, vs, ks, mena, meno, sprava pre príjemcu, adresa1, adresa2, dátum)
-            $sql = "INSERT INTO payment (payment_id, iban_id, sum, vs, ss, ks, moneytype, name, info_name, adress, adress2, date_iban) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO payment (payment_id, iban_id, sum, vs, ss, ks, moneytype, name, info_name, adress, adress2, date_iban, payment_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("iidsssssssss", $user_id, $iban_id, $sum, $vs, $ss, $ks, $moneytype, $name, $info_name, $adress, $adress2, $date_iban);
+            $stmt->bind_param("iidssssssssss", $user_id, $iban_id, $sum, $vs, $ss, $ks, $moneytype, $name, $info_name, $adress, $adress2, $date_iban, $payment_name);
 
             if ($stmt->execute()){
                 // Úspech
