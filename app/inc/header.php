@@ -25,28 +25,36 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/qrcode-app/app/index.php">IBAN</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">IBAN</a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/qrcode-app/app/index.php">Prehľad IBAN účtov</a>
+              <?php if (isset($_SESSION['user_id']))
+                echo '<a class="dropdown-item" href="/qrcode-app/app/ibans.php">Pridať IBAN</a>'
+              ?>
+            </div>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link" href="/qrcode-app/app/payment.php">Zdieľanie platby</a>
-            <?php
-              if (isset($_SESSION['user_id'])){
-                $user_id = $_SESSION['user_id'];
-                $sql = "SELECT 1 FROM payment WHERE payment_id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("i", $user_id);
-                $stmt->execute();
-                $result = $stmt->get_result();
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Platby</a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/qrcode-app/app/payment.php">Zdieľanie platby</a>
+              <?php
+                if (isset($_SESSION['user_id'])){
+                  $user_id = $_SESSION['user_id'];
+                  $sql = "SELECT 1 FROM payment WHERE payment_id = ?";
+                  $stmt = $conn->prepare($sql);
+                  $stmt->bind_param("i", $user_id);
+                  $stmt->execute();
+                  $result = $stmt->get_result();
 
-                if ($result->num_rows > 0){
-                  // Používateľ je prihlásený a má uložené platby, zobrazíme dropdown menu
-                  echo '<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                          <a class="dropdown-item" href="/qrcode-app/app/saved_payments.php">Uložené platby</a>
-                        </div>';
+                  if ($result->num_rows > 0){
+                    // Používateľ je prihlásený a má uložené platby, zobrazíme dropdown item
+                    echo '<a class="dropdown-item" href="/qrcode-app/app/saved_payments.php">Uložené platby</a>';
+                  }
+                  $stmt->close();
                 }
-                $stmt->close();
-              }?>
+              ?>
+            </div>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/qrcode-app/app/about.php">O apke</a>
