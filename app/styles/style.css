@@ -145,6 +145,7 @@ h2 {
     border-radius: 15px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    min-width: 185px;
 }
 
 .dropdown-item {
@@ -163,21 +164,19 @@ h2 {
     left: 0;
     right: 0;
     width: auto;
-}
-
-.nav-item.dropdown .dropdown-menu {
     transition: all 0.3s ease-out;
     opacity: 0;
     visibility: hidden;
     transform: scaleY(0);
     transform-origin: top;
-    display: block;
+    display: none;
 }
 
 .nav-item.dropdown:hover .dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: scaleY(1);
+    display: block;
 }
 /* CSS pre login.php */
 .card {
