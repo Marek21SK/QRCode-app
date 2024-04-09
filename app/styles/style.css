@@ -323,6 +323,12 @@ h2 {
   text-align: center; 
 }
 
+.btn-primary.edit-button {
+  height: auto;
+  font-size: 0.6rem;
+  text-align: center;
+}
+
 .payment{
   color: #007bff;
   margin-bottom: 15px;
@@ -445,4 +451,9 @@ form input[type="text"], form input[type="date"] {
 
 #ibanTable {
   display: none;
+}
+
+td.centered-button {
+  text-align: center;
+  vertical-align: middle;
 }
