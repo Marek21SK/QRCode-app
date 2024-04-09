@@ -38,7 +38,7 @@
           <!-- Zobrazenie prehľadu IBAN-ov -->
           <?php
           // Získanie IBAN-ov aktuálne prihláseného používateľa
-          $sql = "SELECT iban, iban_name FROM iban WHERE iban_id = ?";
+          $sql = "SELECT iban, iban_name, id FROM iban WHERE iban_id = ?";
           $stmt = $conn->prepare($sql);
           $stmt->bind_param("i", $user_id);
           $stmt->execute();
@@ -52,7 +52,8 @@
                   <thead>
                     <tr>
                       <th scope="col" style="width: 40%;">IBAN</th>
-                      <th scope="col" style="width: 60%;">Názov</th>
+                      <th scope="col" style="width: 50%;">Názov</th>
+                      <th scope="col" style="width: 10%;">Zmeny</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -60,7 +61,9 @@
                     while ($row = $result->fetch_assoc()) {
                       $formattedIBAN = formatIBAN($row["iban"]);
                       $iban_name = $row["iban_name"];
-                      echo "<tr><td class='iban' style='white-space: nowrap;'>" . $formattedIBAN . "</td><td style='white-space: nowrap;'>" . $iban_name . "</td></tr>";
+                      $iban_id = $row["iban"];
+                      $iban = $row["id"];
+                      echo "<tr data-id-iban='" . $iban . "'><td class='iban' style='white-space: nowrap;'>" . $formattedIBAN . "</td><td class='iban-name' style='white-space: nowrap;'>" . $iban_name . "</td><td class='centered-button'><button class='btn btn-success edit-button btn-block'>Editovať</button></td></tr>";
                     }
                     ?>
                   </tbody>
@@ -86,6 +89,31 @@
     <h4><strong>Vitajte v aplikácií QRCode.</strong></h4>
   </div>
 <?php endif; ?>
+
+<!-- Modálne okno pre editovanie IBAN-u -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Editovať názov IBAN</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="form-group">
+            <label for="iban-name">Názov IBAN</label>
+            <input type="text" class="form-control" id="iban-name" name="iban-name">
+          </div>
+          <input type="hidden" id="iban-id" name="iban-id">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušiť</button>
+        <button type="button" class="btn btn-primary" id="saveButton">Uložiť zmeny</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <?php
 // Funkcia na zobrazenie IBAN s medzerami po 4 znakoch
@@ -116,12 +144,61 @@ function formatIBAN($iban)
                   "previous":   "Predchádzajúci"
               }
           },
-          "order": [[2, 'asc']],
+          "order": [[3, 'asc']],
           "initComplete": function(settings, json){
             $('#ibanTable').show();
           }
       });
   });
+</script>
+
+<!-- Skript pre editáciu IBAN-u -->
+<script>
+$(document).ready(function() {
+  $('.edit-button').click(function() {
+    var row = $(this).closest('tr');
+    var ibanName = row.find('.iban-name').text();
+    var ibanId = $(this).closest('tr').data('id-iban');
+
+    $('#iban-name').val(ibanName);
+    $('#iban-id').val(ibanId);
+
+    $('#editModal').modal('show');
+  });
+
+  $('.btn-secondary').click(function() {
+    $('#editModal').modal('hide');
+  });
+
+  $('#saveButton').click(function(e) {
+    e.preventDefault();
+
+    var ibanName = $('#iban-name').val();
+    var ibanId = $('#iban-id').val();
+
+    $.ajax({
+      type: 'POST',
+      url: 'config/edit_iban.php',
+      data: {
+        'iban-name': ibanName,
+        'iban-id': ibanId
+      },
+      dataType: 'json',
+      success: function(data) {
+        if (data.success) {
+          $("#editModal").modal('hide');
+          location.reload();
+        } else {
+          // Ak došlo k chybe, zobrazíme chybovú správu
+          alert("Došlo k chybe pri ukladaní zmien: " + data.error);
+        }
+      },
+      error: function() {
+        alert("Došlo k chybe pri komunikácii so serverom.");
+      }
+    });
+  });
+});
 </script>
 
 <!-- Skript na schovanie alertu po určitom čase -->
