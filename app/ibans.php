@@ -70,9 +70,14 @@
 
 <!-- Skript na schovanie alertu po určitom čase -->
 <script>
-  setTimeout(function () {
-    document.querySelector('.alert').style.display = 'none';
-  }, 4000);
+    document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+        var alertElement = document.querySelector('.alert');
+        if (alertElement) {
+        alertElement.style.display = 'none';
+        }
+    }, 4000);
+    });
 </script>
 
 <?php include 'inc/footer.php'; ?>
