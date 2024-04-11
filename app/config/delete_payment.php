@@ -8,11 +8,11 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Funkcia na získanie platby pre aktuálneho používateľa
-function getPayment($conn, $payment_id){
+function getPayment($conn, $id){
     // Príprava SQL dotazu pre získanie platby z databázy
     $sql = "SELECT * FROM payment WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $payment_id);
+    $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -25,32 +25,27 @@ function getPayment($conn, $payment_id){
 }
 
 // Funkcia na vymazanie platby
-function deletePayment($conn, $payment_id){
+function deletePayment($conn, $id){
     // Príprava SQL dotazu pre vymazanie platby z databázy
     $sql = "DELETE FROM payment WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $payment_id);
+    $stmt->bind_param("i", $id);
 
     return $stmt->execute();
 }
 
-if(isset($_GET['payment_id'])){
+if(isset($_POST['payment_id'])){
     // Získanie ID platby z URL
-    $payment_id = $_GET['payment_id'];
+    $id = $_POST['payment_id'];
 
     // Získanie platby
-    $payment = getPayment($conn, $payment_id);
+    $payment = getPayment($conn, $id);
 
     // Vymazanie platby
-    if (deletePayment($conn, $payment_id)){
-        header("Location: /qrcode-app/app/saved_payments.php");
-        exit();
+    if (deletePayment($conn, $id)){
+        echo json_encode(['success' => true]);
     } else {
-        header("Location: /qrcode-app/app/saved_payments.php");
-        exit();
+        echo json_encode(['success' => false, 'error' => 'Nepodarilo sa odstrániť záznam.']);
     }
-} else {
-    header("Location: /qrcode-app/app/saved_payments.php");
-    exit();
 }
 ?>

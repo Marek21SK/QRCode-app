@@ -70,12 +70,7 @@
                 <div class="card mb-2" id="modal-card">
                     <div class="card-body" id="card-body">
                         <h5 class="card-title">
-                          <?php 
-                              if ($payment['payment_name'] === NULL){
-                                echo 'Uložená platba';  
-                              } else {
-                                echo htmlspecialchars($payment['payment_name']);
-                              }?>
+                          <?= $payment['payment_name'] ? htmlspecialchars($payment['payment_name']) : 'Uložená platba'; ?>
                         </h5>
                         <p id="payment-data">
                             <?php $ibanId = $payment['iban_id'];
@@ -324,7 +319,7 @@ function confirmDelete(button){
     if (result.isConfirmed){
       $.ajax({
         url: 'config/delete_payment.php',
-        type: 'GET',
+        type: 'POST',
         data: {
           payment_id: paymentId
         },
