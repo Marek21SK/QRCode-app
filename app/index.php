@@ -63,7 +63,14 @@
                       $iban_name = $row["iban_name"];
                       $iban_id = $row["iban"];
                       $iban = $row["id"];
-                      echo "<tr data-id-iban='" . $iban . "'><td class='iban' style='white-space: nowrap;'>" . $formattedIBAN . "</td><td class='iban-name' style='white-space: nowrap;'>" . $iban_name . "</td><td class='centered-button'><button class='btn btn-success edit-button btn-block'>Editovať</button></td></tr>";
+                      echo "<tr data-id-iban='" . $iban . "'>
+                              <td class='iban' style='white-space: nowrap; vertical-align: middle; text-align: left;'>" . $formattedIBAN . "</td>
+                              <td class='iban-name' style='white-space: nowrap; vertical-align: middle; text-align: left;'>" . $iban_name . "</td>
+                              <td class='centered-button'>
+                                <button class='btn btn-success edit-button btn-block'>Editovať</button>
+                                <button class='btn btn-danger delete-button btn-block'>Vymazať</button>
+                              </td>
+                            </tr>";
                     }
                     ?>
                   </tbody>
@@ -129,7 +136,7 @@ function formatIBAN($iban)
 <script>
   $(document).ready(function() {
       $('#ibanTable').DataTable({
-          "pageLength": 10,
+          "pageLength": 5,
           "lengthMenu": [[5, 10, 15, 20], [5, 10, 15, "MAX"]],
           "searching": true,
           "language": {
@@ -155,7 +162,7 @@ function formatIBAN($iban)
 <!-- Skript pre editáciu IBAN-u -->
 <script>
 $(document).ready(function() {
-  $('.edit-button').click(function() {
+  $(document).on('click', '.edit-button', function() {
     var row = $(this).closest('tr');
     var ibanName = row.find('.iban-name').text();
     var ibanId = $(this).closest('tr').data('id-iban');
@@ -190,11 +197,64 @@ $(document).ready(function() {
           location.reload();
         } else {
           // Ak došlo k chybe, zobrazíme chybovú správu
-          alert("Došlo k chybe pri ukladaní zmien: " + data.error);
+          Swal.fire('Chyba', "Došlo k chybe pri ukladaní zmien: " + data.error, 'error');
         }
       },
       error: function() {
-        alert("Došlo k chybe pri komunikácii so serverom.");
+        Swal.fire('Chyba', "Došlo k chybe pri komunikácii so serverom.", 'error');
+      }
+    });
+  });
+});
+</script>
+
+<!-- Skript pre vymazanie IBAN-u -->
+<script>
+$(document).ready(function(){
+  $(document).on('click', '.delete-button', function(){
+    var row = $(this).closest('tr');
+    var ibanId = row.data('id-iban');
+    var iban = ibanId;
+
+    Swal.fire({
+      title: 'Naozaj chcete odstrániť uložený IBAN?',
+      text: "Táto akcia je nevratná!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Odstrániť platbu',
+      cancelButtonText: 'Zrušiť'
+    }).then((result) => {
+      if (result.isConfirmed){
+        $.ajax({
+          type: 'POST',
+          url: 'config/delete_iban.php',
+          data: {
+            'data-id-iban': iban
+          },
+          dataType: 'json',
+          success: function(data) {
+            if (data.success) {
+              Swal.fire({
+                title: 'IBAN bol úspešne vymazaný!',
+                icon: 'success',
+              }).then(() => {
+                location.reload();
+              });
+            } else {
+              // Ak došlo k chybe, zobrazíme chybovú správu
+              Swal.fire({
+                icon: 'error',
+                title: 'Chyba',
+                html: data.error
+              });
+            }
+          },
+          error: function() {
+            Swal.fire('Chyba', "Došlo k chybe pri komunikácii so serverom.", 'error');
+          }
+        });
       }
     });
   });
@@ -203,8 +263,13 @@ $(document).ready(function() {
 
 <!-- Skript na schovanie alertu po určitom čase -->
 <script>
-  setTimeout(function () {
-    document.querySelector('.alert').style.display = 'none';
-  }, 4000);
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      var alertElement = document.querySelector('.alert');
+      if (alertElement) {
+        alertElement.style.display = 'none';
+      }
+    }, 4000);
+  });
 </script>
 <?php include 'inc/footer.php'; ?>
