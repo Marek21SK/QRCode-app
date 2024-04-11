@@ -115,6 +115,10 @@
           <div id="qrPrompt" class="text-center mx-auto mb-3"><h5>Tu sa zobrazí vygenerovaný QR kód</h5></div>
             <div id="qrPrompt2" class="text-center mx-auto mb-3"><h5>Váš vygenerovaný QR kód</h5></div>
             <?php echo '<style> #qrPrompt2 {display: none;} </style>';?>
+            <div class="mb-3">
+              <label for="preview_payment_name" class="form-label">Názov platby</label>
+              <input type="text" class="form-control" id="preview_payment_name" name="preview_payment_name" value="<?php echo isset($_POST['payment_name']) ? htmlspecialchars($_POST['payment_name']) : ''; ?>" disabled>
+            </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="prewiev_payment_id" class="form-label">IBAN</label>
@@ -354,6 +358,7 @@ function confirmDelete(button){
     var $savedIBANs = <?= json_encode($savedIBANs); ?>;
     var formattedDate = moment(selectedPayment.date_iban).format("YYYY-MM-DD");
 
+    $('#preview_payment_name').val(selectedPayment.payment_name);
     $('#preview_payment_id').val($savedIBANs[selectedPayment.iban_id]);
     $('#preview_moneytype').val(selectedPayment.moneytype);
     $('#preview_ks').val(selectedPayment.ks);
@@ -377,6 +382,7 @@ function confirmDelete(button){
 <script>
   function generateQRCode() {
     // Získanie hodnôt z príslušných polí vo formulári
+    var payment_name = $('#preview_payment_name').val();
     var iban = $('#preview_payment_id').val();
     var moneytype = $('#preview_moneytype').val();
     var ks = $('#preview_ks').val();
@@ -402,6 +408,7 @@ function confirmDelete(button){
 
     // Funkcia na zrušenie hodnôt vo formulári aby sa pri ďalšom otvorení modálneho okna nezobrazovali predchádzajúce hodnoty
     function resetForm() {
+      $('#preview_payment_name').val('');
       $('#preview_payment_id').val('');
       $('#preview_moneytype').val('');
       $('#preview_ks').val('');
