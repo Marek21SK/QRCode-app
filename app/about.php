@@ -25,7 +25,19 @@
     <ul class="list-group text-start custom-list"><style>.custom-list li::before{content: "• ";}</style>
         <li class="list-group-item">Tlačidlo <strong>Uložiť platbu</strong> slúži na uloženie platby pre ďalšie použitie</li>
         <li class="list-group-item">Tlačidlo <strong>Ukážka</strong> slúži na zobrazenie vyplneného formulária s vygenerovaním QR kódu</li>
-        <li class="list-group-item">Tlačidlo <strong>Zobraziť uložené platby</strong> slúži na zobrazenie uložených platieb</li>
+    </ul>
+
+    <h2 class="mt-5">Uložené platby</h2>
+    <ul class="list-group list-group-flush text-start">
+        <li class="list-group-item">Uložené platby slúžia k evidencii a rýchlemu prístupu k vašim skôr uloženým platbám</li>
+        <li class="list-group-item">Po uložení platby budete môcť ľahko získať prístup k QR kódu a potrebným informáciám o danej platbe</li>
+        <li class="list-group-item">Uložené platby môžete kedykoľvek upraviť a odstrániť</li>
+    </ul>
+
+    <h2 class="mt-5">Prehľad IBAN-ov</h2>
+    <ul class="list-group list-group-flush text-start">
+        <li class="list-group-item">Prehľad IBAN-ov vám umožní evidovať a spravovať vaše bankové účty</li>
+        <li class="list-group-item">Tu môžete jednoducho sledovať, upravovať, odstraňovať svoje IBAN čísla podľa vašich potrieb</li>
     </ul>
 
     <h2 class="mt-5">Kontaktujte nás</h2>
