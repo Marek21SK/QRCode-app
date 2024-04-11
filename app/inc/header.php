@@ -20,7 +20,7 @@
   <nav class="navbar navbar-expand-sm navbar-light bg-light mb-4">
     <div class="container">
       <a class="navbar-brand" href="#" style="cursor:default" rel="nofollow">
-        <img src="https://chart.googleapis.com/chart?cht=qr&chl=Test&chs=180x180&choe=UTF-8&chld=L|2" alt="Logo" height="30" class="d-inline-block align-top">
+        <img src="images/test.png" alt="Logo" height="30" class="d-inline-block align-top">
         QR Code</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
