@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Kontrola či už IBAN neexistuje v databáze
-    $checkIBAN = "SELECT id FROM iban WHERE iban = ? AND iban_id = ?";
+    $checkIBAN = "SELECT id FROM iban WHERE iban = ? AND user_id = ?";
     $checkIBANsmt = $conn-> prepare($checkIBAN);
     $checkIBANsmt-> bind_param("si", $iban, $user_id);
     $checkIBANsmt-> execute();
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Vloženie nového IBAN do databázy
-    $sql = "INSERT INTO iban (iban_id, iban, iban_name) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO iban (user_id, iban, iban_name) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iss", $user_id, $iban, $iban_name);
 

@@ -22,7 +22,7 @@
           $iban = filter_input(INPUT_POST, 'payment_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         
           // Získanie id pre vybraný IBAN od používateľa, ktorý v poradí pridal daný IBAN
-          $getIBANid = "SELECT iban.id FROM iban INNER JOIN users ON iban.iban_id = users.id WHERE iban.iban = ? AND iban.iban_id = ?";
+          $getIBANid = "SELECT iban.id FROM iban INNER JOIN users ON iban.user_id = users.id WHERE iban.iban = ? AND iban.user_id = ?";
           $stmt = $conn->prepare($getIBANid);
           $stmt->bind_param("si", $iban, $user_id);
           $stmt->execute();
@@ -55,7 +55,7 @@
             $user_id = $_SESSION['user_id'];
             
             // Pridať do databázy (id_používateľa, id_iban-u, suma, vs, ks, mena, meno, sprava pre príjemcu, adresa1, adresa2, dátum)
-            $sql = "INSERT INTO payment (payment_id, iban_id, sum, vs, ss, ks, moneytype, name, info_name, adress, adress2, date_iban, payment_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO payment (user_id, iban_id, sum, vs, ss, ks, moneytype, name, info_name, adress, adress2, date_iban, payment_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("iidssssssssss", $user_id, $iban_id, $sum, $vs, $ss, $ks, $moneytype, $name, $info_name, $adress, $adress2, $date_iban, $payment_name);
 
@@ -75,7 +75,7 @@
       $ibanList = array();
 
       // Príprava SQL dotazu pre získanie IBAN-u z databázy
-      $sql = "SELECT id, iban FROM iban WHERE iban_id = ?";
+      $sql = "SELECT id, iban FROM iban WHERE user_id = ?";
       $stmt = $conn->prepare($sql);
       $stmt->bind_param("i", $user_id);
       $stmt->execute();
@@ -231,7 +231,7 @@
                   <select class="form-control" id="preview_payment_id" name="preview_payment_id" disabled>
                   <option value="" selected disabled>Vyberte IBAN</option>
                   <?php foreach ($savedIBANs as $ibanOption): ?>
-                    <option value="<?php echo $ibanOption; ?>" <?php echo (isset($_POST['payment_id']) && $_POST['payment_id'] == $ibanOption) ? 'selected' : ''; ?>>
+                    <option value="<?php echo $ibanOption; ?>" <?php echo (isset($_POST['user_id']) && $_POST['user_id'] == $ibanOption) ? 'selected' : ''; ?>>
                       <?php echo formatIBAN($ibanOption); ?>
                     </option>
                   <?php endforeach; ?>

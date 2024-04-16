@@ -8,7 +8,7 @@
         $ibanList = array();
   
         // Príprava SQL dotazu pre získanie IBAN-u z databázy
-        $sql = "SELECT id, iban FROM iban WHERE iban_id = ?";
+        $sql = "SELECT id, iban FROM iban WHERE user_id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
@@ -28,7 +28,7 @@
       $paymentList = array();
 
       // Príprava SQL dotazu pre získanie platby z databázy
-      $sql = "SELECT * FROM payment WHERE payment_id = ?";
+      $sql = "SELECT * FROM payment WHERE user_id = ?";
       $stmt = $conn->prepare($sql);
       $stmt->bind_param("i", $user_id);
       $stmt->execute();
