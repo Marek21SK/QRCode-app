@@ -8,8 +8,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <link href="https://cdn.datatables.net/v/dt/dt-2.0.3/datatables.min.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link href="https://cdn.datatables.net/v/dt/dt-2.0.3/datatables.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.datatables.net/v/dt/dt-2.0.3/datatables.min.js"></script>
@@ -75,7 +75,14 @@
                     $row = $result->fetch_assoc();
                     echo '<li class="nav-item" style="background-color: #cccccc; border-radius: 5px;">
                             <a class="nav-link" href="#" style="font-weight: bold; color: #000;">Vitajte, ' . $row['nickname'] . '</a>
-                        </li>';
+                          </li>
+                          <li class="nav-item">
+                            <form action="/qrcode-app/app/logout.php" method="POST">
+                              <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center" style="height: 40px;">
+                              <span style="line-height: 10px;">Odhlásiť</span>
+                              </button>
+                            </form>
+                          </li>';
                 }
                 $stmt->close();
               } else {

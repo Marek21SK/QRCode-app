@@ -17,19 +17,19 @@
     $nickname = $row['nickname'];
     ?>
     <div class="index-custom container d-flex flex-column align-items-center justify-content-center">
-    <div class="container mt-4 d-flex flex-column align-items-center justify-content-center">
+    <!-- <div class="container mt-4 d-flex flex-column align-items-center justify-content-center">
       <div style="display: contents;">
-        <h5 style="font-weight: bold;">Vitajte, používateľ: <strong><?php echo $nickname; ?></strong></h5>
+        <h5 style="font-weight: bold;">Vitajte, používateľ: <strong><?php /* echo $nickname; */?></strong></h5>
         <form action="/qrcode-app/app/logout.php" method="POST">
           <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center" style="height: 25px;">
             <span style="line-height: 10px;">Odhlásiť</span>
           </button>
         </form><br>
-        <?php if (isset($_SESSION['success1'])) {
+        <?php /*if (isset($_SESSION['success1'])) {
             echo '<div class="alert alert-success" role="alert">' . $_SESSION['success1'] . '</div>';
-            unset($_SESSION['success1']);} ?>
+            unset($_SESSION['success1']);}*/ ?>
       </div>
-    </div>
+    </div> -->
 
     <div class="container" style="margin-bottom: 10px;">
     <h4 class="d-flex justify-content-center align-items-center">Prehľad IBAN-ov</h4><br>
@@ -223,7 +223,7 @@ $(document).ready(function(){
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Odstrániť platbu',
+      confirmButtonText: 'Odstrániť IBAN',
       cancelButtonText: 'Zrušiť'
     }).then((result) => {
       if (result.isConfirmed){

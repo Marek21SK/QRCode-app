@@ -36,8 +36,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
         if (password_verify($password, $passwordHash)){
             $_SESSION['user_id'] = $row['id'];
-            $_SESSION['success1'] = "Úspešne ste sa prihlásili";
-            header("Location: /qrcode-app/app/index.php");
+            //$_SESSION['success1'] = "Úspešne ste sa prihlásili";
+
+            // Príprava SQL dotazu pre kontrolu, či už má používateľ uložené platby
+            $sql = "SELECT 1 FROM payment WHERE user_id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $row['id']);
+
+            // Vykonanie a získanie výsledkov
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0){
+                header("Location: /qrcode-app/app/saved_payments.php");
+            } else {
+
+                // Príprava SQL dotazu pre kontrolu, či už má používateľ uložený IBAN
+                $sql = "SELECT 1 FROM iban WHERE user_id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $row['id']);
+
+                // Vykonanie a získanie výsledkov
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0){
+                    header("Location: /qrcode-app/app/payment.php");
+                } else {
+                    header("Location: /qrcode-app/app/ibans.php");
+                }
+            }
             exit();
         } else {
             $_SESSION['error'] = "Zadali ste nesprávný email alebo heslo";

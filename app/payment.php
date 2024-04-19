@@ -75,18 +75,19 @@
       $ibanList = array();
 
       // Príprava SQL dotazu pre získanie IBAN-u z databázy
-      $sql = "SELECT id, iban FROM iban WHERE user_id = ?";
+      $sql = "SELECT id, iban, iban_name FROM iban WHERE user_id = ?";
       $stmt = $conn->prepare($sql);
       $stmt->bind_param("i", $user_id);
       $stmt->execute();
       $result = $stmt->get_result();
 
-      // Načítanie IBAN-ov do poľa
+      // Načítanie IBAN-ov do poľa so všetkými údajmi v db
       while ($row = $result->fetch_assoc()){
-        $ibanList[$row['id']] = $row['iban'];
+        $ibanList[$row['id']] = array(
+          'iban' => $row['iban'],
+          'iban_name' => $row['iban_name']
+        );
       }
-      $stmt->close();
-
       return $ibanList;
     }
 
@@ -113,19 +114,19 @@
   <h3 class="form-title display-8 mx-auto">Formulár na pridanie novej platby</h3><hr>
     <div class="mb-3">
       <label for="payment_name" class="form-label">Názov platby</label>
-      <input type="text" class="form-control" id="payment_name" name="payment_name" placeholder="Názov platby" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+      <input type="text" class="form-control" id="payment_name" name="payment_name" placeholder="Názov platby" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
     </div>
     <div class="col-md-6">
       <div class="mb-3">
         <label for="payment_id" class="form-label">IBAN</label>
         <?php if ($ibanErr): ?>
-          <select class="form-control is-invalid" id="payment_id" name="payment_id" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+          <select class="form-control is-invalid" id="payment_id" name="payment_id" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
         <?php else: ?>
           <select class="form-control" id="payment_id" name="payment_id" <?php echo $loggedUser ? '' : 'disabled'; ?>>
         <?php endif; ?>
           <option value="" selected disabled>Vyberte IBAN</option>
           <?php foreach ($savedIBANs as $ibanOption): ?>
-            <option value="<?php echo $ibanOption; ?>"><?php echo formatIBAN($ibanOption); ?></option>
+            <option value="<?php echo $ibanOption['iban']; ?>"><?php echo formatIBAN($ibanOption['iban']) . ' - ' . $ibanOption['iban_name']; ?></option>
           <?php endforeach; ?>
         </select>
         <div class="invalid-feedback">
@@ -135,7 +136,7 @@
 
       <div class="mb-3"> <!-- Ak by som musel skriť tento HTML element style="display: none;" + na koniec mimo div <input type="hidden" name="moneytype" value="EUR"/> -->
         <label for="moneytype" class="form-label">Mena prevodu</label>
-        <select class="form-control <?php echo !$moneytypeErr ?: 'is-invalid';?>" id="moneytype" name="moneytype" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <select class="form-control <?php echo !$moneytypeErr ?: 'is-invalid';?>" id="moneytype" name="moneytype" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
           <option value="EUR" selected>EUR</option>
         </select>
         <small>Mena prevodu automaticky nastavená</small>
@@ -146,14 +147,14 @@
 
       <div class="mb-3">
         <label for="ks" class="form-label">Konštantný symbol</label>
-        <input type="text" class="form-control" id="ks" name="ks" placeholder="1234" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="text" class="form-control" id="ks" name="ks" placeholder="1234" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
       </div>
     </div>
 
     <div class="col-md-6">
         <div class="mb-3">
         <label for="sum" class="form-label">Suma</label>
-        <input type="number" step="0.01" class="form-control <?php echo !$sumErr ?: 'is-invalid';?>" id="sum" name="sum" placeholder="10.00" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="number" step="0.01" class="form-control <?php echo !$sumErr ?: 'is-invalid';?>" id="sum" name="sum" placeholder="10.00" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
         <div class="invalid-feedback">
           <?php echo $sumErr; ?>
         </div>
@@ -161,38 +162,38 @@
 
       <div class="mb-3">
         <label for="vs" class="form-label">Variabilný symbol</label>
-        <input type="text" class="form-control" id="vs" name="vs" placeholder="9876543210" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="text" class="form-control" id="vs" name="vs" placeholder="9876543210" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
       </div>
 
       <div class="mb-3">
         <label for="ss" class="form-label">Špecifický symbol</label>
-        <input type="text" class="form-control" id="ss" name="ss" placeholder="1234567890" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="text" class="form-control" id="ss" name="ss" placeholder="1234567890" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
       </div>
 
       <div class="mb-3">
         <label for="date_iban" class="form-label">Splatnosť platobného príkazu</label>
-        <input type="date" class="form-control" id="date_iban" name="date_iban" placeholder="dd. mm. rrrr" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="date" class="form-control" id="date_iban" name="date_iban" placeholder="dd. mm. rrrr" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
       </div>
     </div>
 
     <div class="mb-3">
         <label for="info_name" class="form-label">Informácia pre príjemcu</label>
-        <input type="text" class="form-control <" id="info_name" name="info_name" placeholder="Informácia pre príjemcu" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="text" class="form-control" id="info_name" name="info_name" placeholder="Informácia pre príjemcu" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
     </div>
 
     <div class="mb-3">
         <label for="name" class="form-label">Názov príjemcu</label>
-        <input type="text" class="form-control <" id="name" name="name" placeholder="Názov príjemcu" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Názov príjemcu" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
     </div>
 
     <div class="mb-3">
         <label for="adress" class="form-label">Adresa 1. riadok</label>
-        <input type="text" class="form-control <" id="adress" name="adress" placeholder="Adresa 1. riadok" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="text" class="form-control" id="adress" name="adress" placeholder="Adresa 1. riadok" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
     </div>
 
     <div class="mb-3">
         <label for="adress2" class="form-label">Adresa 2. riadok</label>
-        <input type="text" class="form-control <" id="adress2" name="adress2" placeholder="Adresa 2. riadok" <?php echo $loggedUser ? '' : 'disabled'; ?>>
+        <input type="text" class="form-control" id="adress2" name="adress2" placeholder="Adresa 2. riadok" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
         <!--<input type="hidden" id="payment_name" name="payment_name" value="Uložená platba"> -->
     </div>
   </div>
@@ -231,8 +232,8 @@
                   <select class="form-control" id="preview_payment_id" name="preview_payment_id" disabled>
                   <option value="" selected disabled>Vyberte IBAN</option>
                   <?php foreach ($savedIBANs as $ibanOption): ?>
-                    <option value="<?php echo $ibanOption; ?>" <?php echo (isset($_POST['user_id']) && $_POST['user_id'] == $ibanOption) ? 'selected' : ''; ?>>
-                      <?php echo formatIBAN($ibanOption); ?>
+                    <option value="<?php echo $ibanOption['iban']; ?>" <?php echo (isset($_POST['user_id']) && $_POST['user_id'] == $ibanOption['iban']) ? 'selected' : ''; ?>>
+                      <?php echo formatIBAN($ibanOption['iban']); ?>
                     </option>
                   <?php endforeach; ?>
                 </select>
@@ -276,22 +277,22 @@
 
             <div class="mb-3">
                 <label for="preview_info_name" class="form-label">Informácia pre príjemcu</label>
-                <input type="text" class="form-control <" id="preview_info_name" name="preview_info_name" value="<?php echo isset($_POST['info_name']) ? htmlspecialchars($_POST['info_name']) : ''; ?>" disabled>
+                <input type="text" class="form-control" id="preview_info_name" name="preview_info_name" value="<?php echo isset($_POST['info_name']) ? htmlspecialchars($_POST['info_name']) : ''; ?>" disabled>
             </div>
 
             <div class="mb-3">
                 <label for="preview_name" class="form-label">Názov príjemcu</label>
-                <input type="text" class="form-control <" id="preview_name" name="preview_name" value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>" disabled>
+                <input type="text" class="form-control" id="preview_name" name="preview_name" value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>" disabled>
             </div>
 
             <div class="mb-3">
                 <label for="preview_adress" class="form-label">Adresa 1. riadok</label>
-                <input type="text" class="form-control <" id="preview_adress" name="preview_adress" value="<?php echo isset($_POST['adress']) ? htmlspecialchars($_POST['adress']) : ''; ?>" disabled>
+                <input type="text" class="form-control" id="preview_adress" name="preview_adress" value="<?php echo isset($_POST['adress']) ? htmlspecialchars($_POST['adress']) : ''; ?>" disabled>
             </div>
 
             <div class="mb-3">
                 <label for="preview_adress2" class="form-label">Adresa 2. riadok</label>
-                <input type="text" class="form-control <" id="preview_adress2" name="preview_adress2" value="<?php echo isset($_POST['adress2']) ? htmlspecialchars($_POST['adress2']) : ''; ?>" disabled>
+                <input type="text" class="form-control" id="preview_adress2" name="preview_adress2" value="<?php echo isset($_POST['adress2']) ? htmlspecialchars($_POST['adress2']) : ''; ?>" disabled>
             </div>
           </div>
         </div>

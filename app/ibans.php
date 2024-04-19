@@ -15,8 +15,8 @@
                                 <div class="mb-3">
                                     <label for="add_iban" class="form-label">Zadajte IBAN:</label>
                                     <input style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="add_iban" name="iban" placeholder="SK88 8888 8888 8888 8888 8888" maxlength="29" required>
-                                    <label for="iban_name" class="form-label">Popis IBAN-u:</label>
-                                    <textarea style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="iban_name" name="iban_name" placeholder="Prosím, uveďte účel použitia tohto IBAN" rows="3" maxlength="255" required></textarea>
+                                    <label for="iban_name" class="form-label">Názov IBAN:</label>
+                                    <input style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="iban_name" name="iban_name" placeholder="Prosím, uveďte účel použitia tohto IBAN" maxlength="255" required>
                                     <div class="d-grid">
                                     <?php if (isset($_SESSION['error4'])) {
                                         echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error4'] . '</div>';

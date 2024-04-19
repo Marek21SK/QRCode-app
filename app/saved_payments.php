@@ -210,55 +210,55 @@
           <div class="row">
             <div class="form-group">
             <label for="payment_name" class="form-label">Názov platby</label>
-            <input type="text" class="form-control" id="payment_name" name="payment_name" value="<?= htmlspecialchars($payment['payment_name'] ?? '') ?>">
+            <input type="text" class="form-control" id="payment_name" name="payment_name" value="<?= htmlspecialchars($payment['payment_name'] ?? '') ?>" autocomplete="off">
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="sum" class="form-label">Suma:</label>
-                <input type="text" class="form-control" id="sum" name="sum" value="<?= htmlspecialchars($payment['sum']) ?>">
+                <input type="text" class="form-control" id="sum" name="sum" value="<?= htmlspecialchars($payment['sum']) ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
                 <label for="vs" class="form-label">VS:</label>
-                <input type="text" class="form-control" id="vs" name="vs" value="<?= htmlspecialchars($payment['vs'] ?? '') ?>">
+                <input type="text" class="form-control" id="vs" name="vs" value="<?= htmlspecialchars($payment['vs'] ?? '') ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
                 <label for="name" class="form-label">Názov príjemcu:</label>
-                <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($payment['name'] ?? '') ?>">
+                <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($payment['name'] ?? '') ?>" autocomplete="off">
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="ks" class="form-label">KS:</label>
-                <input type="text" class="form-control" id="ks" name="ks" value="<?= htmlspecialchars($payment['ks'] ?? '') ?>">
+                <input type="text" class="form-control" id="ks" name="ks" value="<?= htmlspecialchars($payment['ks'] ?? '') ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
                 <label for="ss" class="form-label">ŠS:</label>
-                <input type="text" class="form-control" id="ss" name="ss" value="<?= htmlspecialchars($payment['ss'] ?? '') ?>">
+                <input type="text" class="form-control" id="ss" name="ss" value="<?= htmlspecialchars($payment['ss'] ?? '') ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
                 <label for="date_iban" class="form-label">Splatnosť platobného príkazu:</label>
-                <input type="date" class="form-control" id="date_iban" name="date_iban" value="<?= $payment['date_iban'] ? date('Y-m-d', strtotime($payment['date_iban'])) : '' ?>">
+                <input type="date" class="form-control" id="date_iban" name="date_iban" value="<?= $payment['date_iban'] ? date('Y-m-d', strtotime($payment['date_iban'])) : '' ?>" autocomplete="off">
               </div>
             </div>
 
               <div class="mb-3">
                 <label for="adress" class="form-label">Adresa 1. riadok:</label>
-                <input type="text" class="form-control" id="adress" name="adress" value="<?= htmlspecialchars($payment['adress'] ?? '') ?>">
+                <input type="text" class="form-control" id="adress" name="adress" value="<?= htmlspecialchars($payment['adress'] ?? '') ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
                 <label for="adress2" class="form-label">Adresa 2. riadok:</label>
-                <input type="text" class="form-control" id="adress2" name="adress2" value="<?= htmlspecialchars($payment['adress2'] ?? '') ?>">
+                <input type="text" class="form-control" id="adress2" name="adress2" value="<?= htmlspecialchars($payment['adress2'] ?? '') ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
                 <label for="info_name" class="form-label">Informácia pre príjemcu:</label>
-                <input type="text" class="form-control" id="info_name" name="info_name" value="<?= htmlspecialchars($payment['info_name'] ?? '') ?>">
+                <input type="text" class="form-control" id="info_name" name="info_name" value="<?= htmlspecialchars($payment['info_name'] ?? '') ?>" autocomplete="off">
               </div>
               <input type="hidden" id="payment_id" name="payment_id" value="">
               <input type="submit" class="btn btn-info btn-sm update-payment-btn" value="Aktualizovať platbu">

@@ -12,6 +12,7 @@
   $('#previewModal').on('show.bs.modal', function (event) {
       // Získanie hodnoty z príslušných polí vo formulári
       var payment_name = $('#payment_name').val();
+      var selectedIban = $('#preview_payment_id').val();
       var iban = $('#payment_id').val();
       var moneytype = $('#moneytype').val();
       var ks = $('#ks').val();
@@ -40,7 +41,7 @@
 
       // Nastaviť vybranú možnosť pre select element
       $('#preview_payment_id option').each(function() {
-          if ($(this).val() == iban) {
+          if ($(this).val() == selectedIban) {
               $(this).prop('selected', true);
           }
       });

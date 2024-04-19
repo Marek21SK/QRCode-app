@@ -97,13 +97,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['success3'] = "IBAN bol úspešne pridaný.";
     } else {
         //$_SESSION['error7'] = "Chyba pri pridávaní IBAN-u: ";
-        header("Location: /qrcode-app/app/index.php");
+        header("Location: /qrcode-app/app/ibans.php");
     }
 
     $stmt->close();
 }
 
 // Presmerovanie na hlavnú stránku
-header("Location: /qrcode-app/app/index.php");
+header("Location: /qrcode-app/app/ibans.php");
 exit();
 ?>
