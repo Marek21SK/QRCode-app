@@ -3,13 +3,6 @@
 <?php include 'config/register_process.php';?>
 <?php include 'config/database.php';?>
 
-<!-- Skript na schovanie alertu po určitom čase -->
-<script>
-  setTimeout(function(){
-    document.querySelector('.alert').style.display = 'none';
-  }, 4000);
-</script>
-
 <!-- Prihlásenie -->
 <div class="container container-custom mt-5">
     <div class="row justify-content-center">
@@ -95,5 +88,17 @@
         </div>
     </div>
 </div>
+
+<!-- Skript na schovanie alertu po určitom čase -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+        var alertElement = document.querySelector('.alert');
+        if (alertElement) {
+        alertElement.style.display = 'none';
+        }
+    }, 4000);
+    });
+</script>
 
 <?php include 'inc/footer.php'; ?>

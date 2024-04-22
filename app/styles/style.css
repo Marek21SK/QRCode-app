@@ -91,6 +91,10 @@ h2 {
 .navbar-nav .nav-link {
     font-weight: bold;
 }
+
+.navbar-nav .nav-link:hover {
+    color: #007bff !important;
+}
   
 .navbar-nav .nav-item:last-child {
     margin-right: 0;
@@ -129,6 +133,50 @@ h2 {
   
 .bg-light-black {
     background-color: #333;
+}
+
+#navbarDropdown:hover {
+    color: #007bff;
+    background-color: #f8f9fa;
+  }
+
+.dropdown-menu {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 185px;
+}
+
+.dropdown-item {
+    font-weight: bold;
+}
+
+.dropdown-item:hover {
+    color: #007bff !important;
+}
+
+.dropdown-item:focus {
+    box-shadow: none !important;
+}
+
+.nav-item.dropdown .dropdown-menu {
+    left: 0;
+    right: 0;
+    width: auto;
+    transition: all 0.3s ease-out;
+    opacity: 0;
+    visibility: hidden;
+    transform: scaleY(0);
+    transform-origin: top;
+    display: none;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: scaleY(1);
+    display: block;
 }
 /* CSS pre login.php */
 .card {
@@ -228,14 +276,13 @@ h2 {
 }
 
 #previewModal-button{
-  height: 25px; 
-  font-size: 0.6rem; 
-  text-align: left; 
-  margin: -10px;
+  height: auto; 
+  font-size: 0.6rem;
+  text-align: center;
 }
 
 #card-body{
-  height: 300px;
+  height: auto;
 }
 
 #payment-data{
@@ -250,6 +297,11 @@ h2 {
   }
 }
 
+.small, small {
+    font-size: xx-small;
+    font-style: italic;
+    font-weight: 500;
+}
 /* CSS pre index.php */
 .table-bordered {
   background-color: #ffffff;
@@ -263,4 +315,145 @@ h2 {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   margin-top: 15px;
   max-width: 1000px;
+}
+/* CSS pre saved_payments.php */
+.btn-success.edit-button{
+  height: auto; 
+  font-size: 0.6rem; 
+  text-align: center; 
+}
+
+.btn-primary.edit-button {
+  height: auto;
+  font-size: 0.6rem;
+  text-align: center;
+}
+
+.payment{
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.modal-content {
+  background-color: #f8f9fa; 
+  border-radius: 5px;
+}
+
+.modal-title {
+  color: #343a40;
+}
+
+.btn {
+  color: #fff;
+  border: none;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+form {
+  color: #495057;
+}
+
+form input[type="text"], form input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.update-payment-btn {
+  margin-top: 10px;
+}
+
+.btn-danger.delete-button{
+  height: auto; 
+  font-size: 0.6rem; 
+  text-align: center; 
+}
+
+.dt-search,
+.dt-layout-cell,
+.dt-layout-row {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: #f9f9f9;
+}
+
+.dt-search {
+  justify-content: space-between;
+}
+
+.dt-layout-cell,
+.dt-layout-row .dt-layout-cell {
+  justify-content: flex-start;
+}
+
+.dt-search label,
+.dt-layout-cell label,
+.dt-layout-row .dt-info {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.dt-search .dt-input,
+.dt-layout-cell .dt-input {
+  flex-grow: 1;
+  padding: 5px;
+}
+
+.dt-layout-row {
+  justify-content: space-between;
+}
+
+.dt-layout-row .dt-paging {
+  display: flex;
+}
+
+.dt-layout-row .dt-paging-button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+.dt-layout-row .dt-paging-button.disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
+  font-weight: bold;
+}
+
+.dt-layout-row .dt-paging-button.current {
+  background-color: #3085d6;
+  color: white;
+  font-weight: 500;
+}
+
+.dt-input {
+  font-weight: 500;
+}
+
+#ibanTable {
+  display: none;
+}
+
+td.centered-button {
+  text-align: center;
+  vertical-align: middle;
 }

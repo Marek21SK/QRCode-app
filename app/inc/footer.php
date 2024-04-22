@@ -11,6 +11,8 @@
   // Funkcia na nastavenie hodnôt polí v modálnom okne pri jeho otvorení
   $('#previewModal').on('show.bs.modal', function (event) {
       // Získanie hodnoty z príslušných polí vo formulári
+      var payment_name = $('#payment_name').val();
+      var selectedIban = $('#preview_payment_id').val();
       var iban = $('#payment_id').val();
       var moneytype = $('#moneytype').val();
       var ks = $('#ks').val();
@@ -24,6 +26,7 @@
       var adress2 = $('#adress2').val();
 
       // Nastaviť hodnoty do príslušných polí v modálnom okne
+      $('#preview_payment_name').val(payment_name);
       $('#preview_payment_id').val(iban);
       $('#preview_moneytype').val(moneytype);
       $('#preview_ks').val(ks);
@@ -38,7 +41,7 @@
 
       // Nastaviť vybranú možnosť pre select element
       $('#preview_payment_id option').each(function() {
-          if ($(this).val() == iban) {
+          if ($(this).val() == selectedIban) {
               $(this).prop('selected', true);
           }
       });

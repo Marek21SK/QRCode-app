@@ -17,28 +17,28 @@
     $nickname = $row['nickname'];
     ?>
     <div class="index-custom container d-flex flex-column align-items-center justify-content-center">
-    <div class="container mt-4 d-flex flex-column align-items-center justify-content-center">
+    <!-- <div class="container mt-4 d-flex flex-column align-items-center justify-content-center">
       <div style="display: contents;">
-        <h5 style="font-weight: bold;">Vitajte, používateľ: <strong><?php echo $nickname; ?></strong></h5>
-        <form action="logout.php" method="POST">
+        <h5 style="font-weight: bold;">Vitajte, používateľ: <strong><?php /* echo $nickname; */?></strong></h5>
+        <form action="/qrcode-app/app/logout.php" method="POST">
           <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center" style="height: 25px;">
             <span style="line-height: 10px;">Odhlásiť</span>
           </button>
         </form><br>
-        <?php if (isset($_SESSION['success1'])) {
+        <?php /*if (isset($_SESSION['success1'])) {
             echo '<div class="alert alert-success" role="alert">' . $_SESSION['success1'] . '</div>';
-            unset($_SESSION['success1']);} ?>
+            unset($_SESSION['success1']);}*/ ?>
       </div>
-    </div>
+    </div> -->
 
     <div class="container" style="margin-bottom: 10px;">
-    <button class="toggleButton btn btn-primary mx-auto d-flex justify-content-center align-items-center" style="height: 25px; font-size: 0.6rem; text-align: left;">Otvoriť prehľad IBAN-ov</button>
-      <div class="row" style="display: none;"><br>
+    <h4 class="d-flex justify-content-center align-items-center">Prehľad IBAN-ov</h4><br>
+      <div class="row"><br>
         <div class="col-md-12">
           <!-- Zobrazenie prehľadu IBAN-ov -->
           <?php
           // Získanie IBAN-ov aktuálne prihláseného používateľa
-          $sql = "SELECT iban, iban_name FROM iban WHERE iban_id = ?";
+          $sql = "SELECT iban, iban_name, id FROM iban WHERE user_id = ?";
           $stmt = $conn->prepare($sql);
           $stmt->bind_param("i", $user_id);
           $stmt->execute();
@@ -48,14 +48,12 @@
           ?>
             <div style="width: 100%; max-width: 800px; margin: auto;">
               <div class="table-responsive">
-                <table class="table table-bordered">
+                <table id="ibanTable" class="table table-bordered">
                   <thead>
                     <tr>
-                      <th colspan="2" class="text-center">Prehľad IBAN-ov</th>
-                    </tr>
-                    <tr>
                       <th scope="col" style="width: 40%;">IBAN</th>
-                      <th scope="col" style="width: 60%;">Názov</th>
+                      <th scope="col" style="width: 50%;">Názov</th>
+                      <th scope="col" style="width: 10%;">Zmeny</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -63,7 +61,16 @@
                     while ($row = $result->fetch_assoc()) {
                       $formattedIBAN = formatIBAN($row["iban"]);
                       $iban_name = $row["iban_name"];
-                      echo "<tr><td class='iban' style='white-space: nowrap;'>" . $formattedIBAN . "</td><td style='white-space: nowrap;'>" . $iban_name . "</td></tr>";
+                      $iban_id = $row["iban"];
+                      $iban = $row["id"];
+                      echo "<tr data-id-iban='" . $iban . "'>
+                              <td class='iban' style='white-space: nowrap; vertical-align: middle; text-align: left;'>" . $formattedIBAN . "</td>
+                              <td class='iban-name' style='white-space: nowrap; vertical-align: middle; text-align: left;'>" . $iban_name . "</td>
+                              <td class='centered-button'>
+                                <button class='btn btn-success edit-button btn-block'>Editovať</button>
+                                <button class='btn btn-danger delete-button btn-block'>Vymazať</button>
+                              </td>
+                            </tr>";
                     }
                     ?>
                   </tbody>
@@ -72,70 +79,8 @@
             </div>
           <?php
           } else {
-            echo "<div class='mx-auto d-flex justify-content-center align-items-center'>Žiadne IBAN pre zobrazenie.</div>";
-          }
-          ?>
-        </div>
-      </div>
-
-      <!-- Formulár na pridanie IBAN -->
-      <div class="row mt-3">
-        <div class="col-md-6 mx-auto d-flex justify-content-center align-items-center"><br>
-          <div class="card" style="padding: 10px; margin-bottom: 10px; border-radius: 15px; border-width: medium; border-color: lightgrey;">
-            <div class="card-body">
-              <form action="config/add_iban_process.php" method="POST">
-                <div class="center-container" style="display: flex; justify-content: center;">
-                  <div class="row">
-                    <div class="mb-3">
-                      <label for="add_iban" class="form-label">Zadajte IBAN:</label>
-                      <input style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="add_iban" name="iban" placeholder="SK88 8888 8888 8888 8888 8888" maxlength="29" required>
-                      <label for="iban_name" class="form-label">Popis IBAN-u:</label>
-                      <textarea style="padding-right: 25px; margin: 10px auto;" type="text" class="form-control" id="iban_name" name="iban_name" placeholder="Prosím, uveďte účel použitia tohto IBAN" rows="3" maxlength="255" required></textarea>
-                      <!-- Skript, ktorý pri pridávaní IBAN-u sa zobrazí tak, že každé 4 znaky dá medzeru pre lepšie skontrolovanie -->
-                      <script>
-                        document.getElementById('add_iban').addEventListener('input', function (event) {
-                          var ibanSpaces = event.target.value.replace(/\s/g, '');
-                          var ibanFormat = ibanSpaces.replace(/(.{4})/g, '$1 ').trim();
-                          event.target.value = ibanFormat;
-                        });
-                      </script>
-                      <div class="d-grid">
-                        <?php if (isset($_SESSION['error4'])) {
-                          echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error4'] . '</div>';
-                          unset($_SESSION['error4']);
-                        }
-                        if (isset($_SESSION['error5'])) {
-                          echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error5'] . '</div>';
-                          unset($_SESSION['error5']);
-                        }
-                        if (isset($_SESSION['success3'])) {
-                          echo '<div class="alert alert-info" role="alert">' . $_SESSION['success3'] . '</div>';
-                          unset($_SESSION['success3']);
-                        }
-                        if (isset($_SESSION['error6'])) {
-                          echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error6'] . '</div>';
-                          unset($_SESSION['error6']);
-                        }
-                        if (isset($_SESSION['error7'])) {
-                          echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error7'] . '</div>';
-                          unset($_SESSION['error7']);
-                        }
-                        if (isset($_SESSION['error8'])) {
-                          echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error8'] . '</div>';
-                          unset($_SESSION['error8']);
-                        }
-                        if (isset($_SESSION['error9'])) {
-                          echo '<div class="alert alert-danger" role="alert">' . $_SESSION['error9'] . '</div>';
-                          unset($_SESSION['error9']);
-                        } ?>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Pridať IBAN</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
+            echo "<div class='mx-auto d-flex justify-content-center align-items-center'>
+                    <h6>Žiadne IBAN pre zobrazenie.</h6></div>";}?>
         </div>
       </div>
     </div>
@@ -152,6 +97,31 @@
   </div>
 <?php endif; ?>
 
+<!-- Modálne okno pre editovanie IBAN-u -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Editovať názov IBAN</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="form-group">
+            <label for="iban-name">Názov IBAN</label>
+            <input type="text" class="form-control" id="iban-name" name="iban-name">
+          </div>
+          <input type="hidden" id="iban-id" name="iban-id">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušiť</button>
+        <button type="button" class="btn btn-primary" id="saveButton">Uložiť zmeny</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <?php
 // Funkcia na zobrazenie IBAN s medzerami po 4 znakoch
 function formatIBAN($iban)
@@ -162,26 +132,144 @@ function formatIBAN($iban)
 }
 ?>
 
-<!-- Skript na zobrazenie/skrytie IBAN-ov -->
+<!-- Skript pre tabuľku DataTables -->
 <script>
-  document.querySelectorAll(".toggleButton").forEach(function(button) {
-    button.addEventListener("click", function() {
-      var content = this.nextElementSibling;
-      if (content.style.display === "none") {
-        content.style.display = "block";
-        this.textContent = "Zatvoriť prehľad IBAN-ov";
-      } else {
-        content.style.display = "none";
-        this.textContent = "Otvoriť prehľad IBAN-ov";
+  $(document).ready(function() {
+      $('#ibanTable').DataTable({
+          "pageLength": 5,
+          "lengthMenu": [[5, 10, 15, 20], [5, 10, 15, "MAX"]],
+          "searching": true,
+          "language": {
+              "lengthMenu": "Zobraziť _MENU_ záznamov na stránku",
+              "zeroRecords": "Nič sa nenašlo - ospravedlňujeme sa",
+              "info": "Zobrazenie strany _PAGE_ z _PAGES_",
+              "infoEmpty": "Žiadne záznamy k dispozícii",
+              "infoFiltered": "(filtrované z celkových _MAX_ záznamov)",
+              "search": "Hľadať:",
+              "paginate": {
+                  "next":       "Ďalší",
+                  "previous":   "Predchádzajúci"
+              }
+          },
+          "order": [[3, 'asc']],
+          "initComplete": function(settings, json){
+            $('#ibanTable').show();
+          }
+      });
+  });
+</script>
+
+<!-- Skript pre editáciu IBAN-u -->
+<script>
+$(document).ready(function() {
+  $(document).on('click', '.edit-button', function() {
+    var row = $(this).closest('tr');
+    var ibanName = row.find('.iban-name').text();
+    var ibanId = $(this).closest('tr').data('id-iban');
+
+    $('#iban-name').val(ibanName);
+    $('#iban-id').val(ibanId);
+
+    $('#editModal').modal('show');
+  });
+
+  $('.btn-secondary').click(function() {
+    $('#editModal').modal('hide');
+  });
+
+  $('#saveButton').click(function(e) {
+    e.preventDefault();
+
+    var ibanName = $('#iban-name').val();
+    var ibanId = $('#iban-id').val();
+
+    $.ajax({
+      type: 'POST',
+      url: 'config/edit_iban.php',
+      data: {
+        'iban-name': ibanName,
+        'iban-id': ibanId
+      },
+      dataType: 'json',
+      success: function(data) {
+        if (data.success) {
+          $("#editModal").modal('hide');
+          location.reload();
+        } else {
+          // Ak došlo k chybe, zobrazíme chybovú správu
+          Swal.fire('Chyba', "Došlo k chybe pri ukladaní zmien: " + data.error, 'error');
+        }
+      },
+      error: function() {
+        Swal.fire('Chyba', "Došlo k chybe pri komunikácii so serverom.", 'error');
       }
     });
   });
+});
+</script>
+
+<!-- Skript pre vymazanie IBAN-u -->
+<script>
+$(document).ready(function(){
+  $(document).on('click', '.delete-button', function(){
+    var row = $(this).closest('tr');
+    var ibanId = row.data('id-iban');
+    var iban = ibanId;
+
+    Swal.fire({
+      title: 'Naozaj chcete odstrániť uložený IBAN?',
+      text: "Táto akcia je nevratná!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Odstrániť IBAN',
+      cancelButtonText: 'Zrušiť'
+    }).then((result) => {
+      if (result.isConfirmed){
+        $.ajax({
+          type: 'POST',
+          url: 'config/delete_iban.php',
+          data: {
+            'data-id-iban': iban
+          },
+          dataType: 'json',
+          success: function(data) {
+            if (data.success) {
+              Swal.fire({
+                title: 'IBAN bol úspešne vymazaný!',
+                icon: 'success',
+              }).then(() => {
+                location.reload();
+              });
+            } else {
+              // Ak došlo k chybe, zobrazíme chybovú správu
+              Swal.fire({
+                icon: 'error',
+                title: 'Chyba',
+                html: data.error
+              });
+            }
+          },
+          error: function() {
+            Swal.fire('Chyba', "Došlo k chybe pri komunikácii so serverom.", 'error');
+          }
+        });
+      }
+    });
+  });
+});
 </script>
 
 <!-- Skript na schovanie alertu po určitom čase -->
 <script>
-  setTimeout(function () {
-    document.querySelector('.alert').style.display = 'none';
-  }, 4000);
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      var alertElement = document.querySelector('.alert');
+      if (alertElement) {
+        alertElement.style.display = 'none';
+      }
+    }, 4000);
+  });
 </script>
 <?php include 'inc/footer.php'; ?>
