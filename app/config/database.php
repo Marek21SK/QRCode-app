@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 /* Starý spôsob konfigurácie databázy
 //Načítanie údajov z JSON súboru
@@ -13,7 +13,7 @@ $password = $config["DB_PASSWORD"];
 $dbname = $config["DB_NAME"];
 */
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
 // Priradenie hodnôt z .env súboru
