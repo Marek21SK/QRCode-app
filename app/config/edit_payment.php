@@ -43,10 +43,10 @@ $payment = getPayment($conn, $payment_id);
 if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     $newData = $_POST;
     if (updatePayment($conn, $payment_id, $newData)){
-        header("Location: /qrcode-app/app/saved_payments.php");
+        header("Location: ../saved_payments.php");
         exit();
     } else {
-        header("Location: /qrcode-app/app/saved_payments.php");
+        header("Location: ../saved_payments.php");
         exit();
     }
 }

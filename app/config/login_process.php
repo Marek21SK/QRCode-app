@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             $result = $stmt->get_result();
 
             if ($result->num_rows > 0){
-                header("Location: /qrcode-app/app/saved_payments.php");
+                header("Location: ../saved_payments.php");
             } else {
 
                 // Príprava SQL dotazu pre kontrolu, či už má používateľ uložený IBAN
@@ -61,9 +61,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 $result = $stmt->get_result();
 
                 if ($result->num_rows > 0){
-                    header("Location: /qrcode-app/app/payment.php");
+                    header("Location: ../payment.php");
                 } else {
-                    header("Location: /qrcode-app/app/ibans.php");
+                    header("Location: ../ibans.php");
                 }
             }
             exit();

@@ -8,7 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <link href="https://cdn.datatables.net/v/dt/dt-2.0.3/datatables.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
+  <link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
   <link rel="stylesheet" type="text/css" href="styles/style.css"> 
   <title>Zdieľanie platby</title>
@@ -27,16 +29,16 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">IBAN</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/qrcode-app/app/index.php">Prehľad IBAN účtov</a>
+              <a class="dropdown-item" href="index.php">Prehľad IBAN účtov</a>
               <?php if (isset($_SESSION['user_id']))
-                echo '<a class="dropdown-item" href="/qrcode-app/app/ibans.php">Pridať IBAN</a>'
+                echo '<a class="dropdown-item" href="ibans.php">Pridať IBAN</a>'
               ?>
             </div>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Platby</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/qrcode-app/app/payment.php">Zdieľanie platby</a>
+              <a class="dropdown-item" href="payment.php">Zdieľanie platby</a>
               <?php
                 if (isset($_SESSION['user_id'])){
                   $user_id = $_SESSION['user_id'];
@@ -48,7 +50,7 @@
 
                   if ($result->num_rows > 0){
                     // Používateľ je prihlásený a má uložené platby, zobrazíme dropdown item
-                    echo '<a class="dropdown-item" href="/qrcode-app/app/saved_payments.php">Uložené platby</a>';
+                    echo '<a class="dropdown-item" href="saved_payments.php">Uložené platby</a>';
                   }
                   $stmt->close();
                 }
@@ -74,7 +76,7 @@
                             <a class="nav-link" href="#" style="font-weight: bold; color: #000;">Vitajte, ' . $row['nickname'] . '</a>
                           </li>
                           <li class="nav-item">
-                            <form action="/qrcode-app/app/logout.php" method="POST">
+                            <form action="logout.php" method="POST">
                               <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center" style="height: 40px;">
                               <span style="line-height: 10px;">Odhlásiť</span>
                               </button>

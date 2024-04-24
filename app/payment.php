@@ -1,9 +1,7 @@
-<?php include 'inc/header.php';?>
-<?php include 'config/database.php';?>
 <?php
-ob_start(); 
-include 'inc/header.php';
-include 'config/database.php';
+  ob_start();  
+  include 'inc/header.php';
+  include 'config/database.php';
 
     $sum = $selectIBAN = $moneytype = "";
     $sumErr = $ibanErr = $moneytypeErr = "";
