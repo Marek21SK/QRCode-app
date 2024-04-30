@@ -22,9 +22,8 @@ RUN apt-get update && \
 # Expose the necessary ports
 EXPOSE 80
 
-# Install Composer and run library 
+# Install Composer 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer require vlucas/phpdotenv
 RUN composer install
 
 # Define the command to run your application
