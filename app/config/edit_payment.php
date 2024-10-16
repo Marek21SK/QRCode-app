@@ -25,10 +25,11 @@ function getPayment($conn, $payment_id){
 }
 // Funkcia na aktualizáciu platby
 function updatePayment($conn, $payment_id, $newData){
+    $date_iban = !empty($newData['date_iban']) ? $newData['date_iban'] : null;
     // Príprava SQL dotazu pre aktualizáciu platby v databáze
     $sql = "UPDATE payment SET sum = ?, vs = ?, ks = ?, ss = ?, name = ?, adress = ?, adress2 = ?, date_iban = ?, info_name = ?, payment_name = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("dsssssssssi", $newData['sum'], $newData['vs'], $newData['ks'], $newData['ss'], $newData['name'], $newData['adress'], $newData['adress2'], $newData['date_iban'], $newData['info_name'], $newData['payment_name'], $payment_id);
+    $stmt->bind_param("dsssssssssi", $newData['sum'], $newData['vs'], $newData['ks'], $newData['ss'], $newData['name'], $newData['adress'], $newData['adress2'], $date_iban, $newData['info_name'], $newData['payment_name'], $payment_id);
 
     return $stmt->execute();
 }
