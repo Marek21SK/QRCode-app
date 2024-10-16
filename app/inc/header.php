@@ -18,7 +18,7 @@
 <body>
   <nav class="navbar navbar-expand-sm navbar-light bg-light mb-4">
     <div class="container">
-      <a class="navbar-brand" href="#" style="cursor:default" rel="nofollow">
+      <a class="navbar-brand" href="index.php" style="cursor:default" rel="nofollow">
         <img src="images/test.png" alt="Logo" height="30" class="d-inline-block align-top">
         QR Code</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
