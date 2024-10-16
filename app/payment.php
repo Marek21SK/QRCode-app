@@ -3,8 +3,8 @@
   include 'inc/header.php';
   include 'config/database.php';
 
-    $sum = $selectIBAN = $moneytype = "";
-    $sumErr = $ibanErr = $moneytypeErr = "";
+    $sum = $selectIBAN = $moneytype = $vs = $ss = $ks = $name = $info_name = $adress = $adress2 = $date_iban = $payment_name = "";
+    $sumErr = $ibanErr = $moneytypeErr = $vsErr = $ssErr = $ksErr = "";
 
     // Odoslať formulár
     if (isset($_POST['submit'])){    
@@ -39,7 +39,42 @@
           $moneytype = filter_input(INPUT_POST, 'moneytype', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         }
 
-        if (empty($sumErr) && empty($ibanErr) && empty($moneytypeErr)){
+        // Overiť VS SS KS
+        if (!empty($_POST['vs']) && !ctype_digit($_POST['vs'])) {
+          $vsErr = 'Error';
+        } else {
+          $vs = filter_input(INPUT_POST, 'vs', FILTER_SANITIZE_NUMBER_INT);
+        }
+  
+        if (!empty($_POST['ss']) && !ctype_digit($_POST['ss'])) {
+          $ssErr = 'Error';
+        } else {
+          $ss = filter_input(INPUT_POST, 'ss', FILTER_SANITIZE_NUMBER_INT);
+        }
+  
+        if (!empty($_POST['ks']) && !ctype_digit($_POST['ks'])) {
+          $ksErr = 'Error';
+        } else {
+          $ks = filter_input(INPUT_POST, 'ks', FILTER_SANITIZE_NUMBER_INT);
+        }
+
+        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $info_name = filter_input(INPUT_POST, 'info_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $adress = filter_input(INPUT_POST, 'adress', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $adress2 = filter_input(INPUT_POST, 'adress2', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $date_iban = filter_input(INPUT_POST, 'date_iban', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $payment_name = filter_input(INPUT_POST, 'payment_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        if ($vsErr || $ssErr || $ksErr){
+          echo "<script>
+            Swal.fire({
+              title: 'Chyba!',
+              text: 'Platbu nebolo možné uložiť. Skontrolujte, či sú všetky polia vyplnené správne.',
+              icon: 'error',
+            });
+          </script>";
+        } elseif ($sumErr || $ibanErr || $moneytypeErr) {
+        } else {
           // Overiť hodnoty, ak nie sú vyplnené, tak nastaviť ich hodnotu na NULL ak sú vyplnené uložia sa vyplnené hodnoty do databázy
           $vs = !empty($_POST['vs']) ? $_POST['vs'] : NULL;
           $ss = !empty($_POST['ss']) ? $_POST['ss'] : NULL; 
@@ -62,7 +97,7 @@
 
             if ($stmt->execute()){
                 // Úspech
-                header('Location: index.php');
+                header('Location: ../saved_payments.php'); // header('Location: index.php'); neviem co je viac user friendly
             }else {
                 // Chyba
                 echo 'Error: ' . $stmt->error;
@@ -115,7 +150,7 @@ ob_end_flush();?>
   <h3 class="form-title display-8 mx-auto">Formulár na pridanie novej platby</h3><hr>
     <div class="mb-3">
       <label for="payment_name" class="form-label">Názov platby</label>
-      <input type="text" class="form-control" id="payment_name" name="payment_name" placeholder="Názov platby" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+      <input type="text" class="form-control" id="payment_name" name="payment_name" placeholder="Názov platby" value="<?php echo htmlspecialchars($payment_name); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
     </div>
     <div class="col-md-6">
       <div class="mb-3">
@@ -127,7 +162,7 @@ ob_end_flush();?>
         <?php endif; ?>
           <option value="" selected disabled>Vyberte IBAN</option>
           <?php foreach ($savedIBANs as $ibanOption): ?>
-            <option value="<?php echo $ibanOption['iban']; ?>"><?php echo formatIBAN($ibanOption['iban']) . ' - ' . $ibanOption['iban_name']; ?></option>
+            <option value="<?php echo $ibanOption['iban']; ?>" <?php echo isset($iban) && ($ibanOption['iban'] == $iban) ? 'selected' : ''; ?>><?php echo formatIBAN($ibanOption['iban']) . ' - ' . $ibanOption['iban_name']; ?></option>
           <?php endforeach; ?>
         </select>
         <div class="invalid-feedback">
@@ -148,14 +183,14 @@ ob_end_flush();?>
 
       <div class="mb-3">
         <label for="ks" class="form-label">Konštantný symbol</label>
-        <input type="text" class="form-control" id="ks" name="ks" placeholder="1234" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="text" class="form-control" id="ks" name="ks" placeholder="1234" maxlength="4" value="<?php echo htmlspecialchars($ks); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
       </div>
     </div>
 
     <div class="col-md-6">
         <div class="mb-3">
         <label for="sum" class="form-label">Suma</label>
-        <input type="number" step="0.01" class="form-control <?php echo !$sumErr ?: 'is-invalid';?>" id="sum" name="sum" placeholder="10.00" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="number" step="0.01" min="0" pattern="[0-9]" class="form-control <?php echo !$sumErr ?: 'is-invalid';?>" id="sum" name="sum" placeholder="10.00" value="<?php echo htmlspecialchars($sum); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
         <div class="invalid-feedback">
           <?php echo $sumErr; ?>
         </div>
@@ -163,38 +198,38 @@ ob_end_flush();?>
 
       <div class="mb-3">
         <label for="vs" class="form-label">Variabilný symbol</label>
-        <input type="text" class="form-control" id="vs" name="vs" placeholder="9876543210" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="text" class="form-control" id="vs" name="vs" placeholder="9876543210" maxlength="10" value="<?php echo htmlspecialchars($vs); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
       </div>
 
       <div class="mb-3">
         <label for="ss" class="form-label">Špecifický symbol</label>
-        <input type="text" class="form-control" id="ss" name="ss" placeholder="1234567890" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="text" class="form-control" id="ss" name="ss" placeholder="1234567890" maxlength="10" value="<?php echo htmlspecialchars($ss); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
       </div>
 
       <div class="mb-3">
         <label for="date_iban" class="form-label">Splatnosť platobného príkazu</label>
-        <input type="date" class="form-control" id="date_iban" name="date_iban" placeholder="dd. mm. rrrr" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="date" class="form-control" id="date_iban" name="date_iban" placeholder="dd. mm. rrrr" value="<?php echo htmlspecialchars($date_iban); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
       </div>
     </div>
 
     <div class="mb-3">
         <label for="info_name" class="form-label">Informácia pre príjemcu</label>
-        <input type="text" class="form-control" id="info_name" name="info_name" placeholder="Informácia pre príjemcu" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="text" class="form-control" id="info_name" name="info_name" placeholder="Informácia pre príjemcu" value="<?php echo htmlspecialchars($info_name); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
     </div>
 
     <div class="mb-3">
         <label for="name" class="form-label">Názov príjemcu</label>
-        <input type="text" class="form-control" id="name" name="name" placeholder="Názov príjemcu" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="text" class="form-control" id="name" name="name" placeholder="Názov príjemcu" value="<?php echo htmlspecialchars($name); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
     </div>
 
     <div class="mb-3">
         <label for="adress" class="form-label">Adresa 1. riadok</label>
-        <input type="text" class="form-control" id="adress" name="adress" placeholder="Adresa 1. riadok" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="text" class="form-control" id="adress" name="adress" placeholder="Adresa 1. riadok" value="<?php echo htmlspecialchars($adress); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
     </div>
 
     <div class="mb-3">
         <label for="adress2" class="form-label">Adresa 2. riadok</label>
-        <input type="text" class="form-control" id="adress2" name="adress2" placeholder="Adresa 2. riadok" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
+        <input type="text" class="form-control" id="adress2" name="adress2" placeholder="Adresa 2. riadok" value="<?php echo htmlspecialchars($adress2); ?>" <?php echo $loggedUser ? '' : 'disabled'; ?> autocomplete="off">
         <!--<input type="hidden" id="payment_name" name="payment_name" value="Uložená platba"> -->
     </div>
   </div>
@@ -322,10 +357,25 @@ ob_end_flush();?>
     var adress = $('#preview_adress').val();
     var adress2 = $('#preview_adress2').val();
 
+    // Overenie, či VS, SS a KS sú zadané ako číselné hodnoty
+    var isVSValid = vs === "" || /^\d+$/.test(vs);
+    var isSSValid = ss === "" || /^\d+$/.test(ss);
+    var isKSValid = ks === "" || /^\d+$/.test(ks);
+
     if (!iban || !sum || !moneytype || iban === "0" || sum === "0" || moneytype === "0") {
       Swal.fire({
         title: 'Chyba!',
-        text: 'Nie je možné vygenerovať QR kód, pokiaľ nie je zadaný IBAN, suma a mena danej platby.',
+        text: 'Nie je možné vygenerovať QR kód, pokiaľ nie je zadaný IBAN a suma danej platby.',
+      //text: 'Nie je možné vygenerovať QR kód, pokiaľ nie je zadaný IBAN, suma a mena danej platby.',
+        icon: 'error',
+      }).then(() => {
+        $('#previewModal').modal('hide');
+      });
+      return;
+    } else if (!isVSValid || !isSSValid || !isKSValid){
+      Swal.fire({
+        title: 'Chyba!',
+        text: 'Variabilný, špecifický a konštantný symbol musia byť číselné hodnoty.',
         icon: 'error',
       }).then(() => {
         $('#previewModal').modal('hide');

@@ -82,7 +82,7 @@
                             ŠS: <?= $payment['ss'] ? htmlspecialchars($payment['ss']): '' ?><br>
                             Príjemca: <?= $payment['name'] ? htmlspecialchars($payment['name']): '' ?><br>
                             Adresa 1: <?= $payment['adress'] ? htmlspecialchars($payment['adress']): '' ?><br>
-                            Splatnosť: <?= $payment['date_iban'] ? date('Y-m-d', strtotime($payment['date_iban'])) : '' ?><br>
+                            Splatnosť: <?= $payment['date_iban'] ? date('Y-m-d', strtotime($payment['date_iban'])) : NULL ?><br>
                         </p> 
                         <div class="row justify-content-between">
                           <div class="col-sm-12 col-md-4">
@@ -206,7 +206,7 @@
       </div>
       <div class="modal-body">
         <!-- Formulár pre editáciu platby -->
-        <form method="POST" action="config/edit_payment.php">
+        <form method="POST" action="config/edit_payment.php" onsubmit="return validateForm()">
           <div class="row">
             <div class="form-group">
             <label for="payment_name" class="form-label">Názov platby</label>
@@ -220,7 +220,7 @@
 
               <div class="mb-3">
                 <label for="vs" class="form-label">VS:</label>
-                <input type="text" class="form-control" id="vs" name="vs" value="<?= htmlspecialchars($payment['vs'] ?? '') ?>" autocomplete="off">
+                <input type="text" class="form-control" id="vs" name="vs" maxlength="10" value="<?= htmlspecialchars($payment['vs'] ?? '') ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
@@ -232,12 +232,12 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="ks" class="form-label">KS:</label>
-                <input type="text" class="form-control" id="ks" name="ks" value="<?= htmlspecialchars($payment['ks'] ?? '') ?>" autocomplete="off">
+                <input type="text" class="form-control" id="ks" name="ks" maxlength="4" value="<?= htmlspecialchars($payment['ks'] ?? '') ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
                 <label for="ss" class="form-label">ŠS:</label>
-                <input type="text" class="form-control" id="ss" name="ss" value="<?= htmlspecialchars($payment['ss'] ?? '') ?>" autocomplete="off">
+                <input type="text" class="form-control" id="ss" name="ss" maxlength="10" value="<?= htmlspecialchars($payment['ss'] ?? '') ?>" autocomplete="off">
               </div>
 
               <div class="mb-3">
@@ -279,7 +279,7 @@
     var selectedPayment = payment.find(p => p.id == paymentId);
 
     var $savedIBANs = <?= json_encode($savedIBANs); ?>;
-    var formattedDate = moment(selectedPayment.date_iban).format("YYYY-MM-DD");
+    var formattedDate = selectedPayment.date_iban ? moment(selectedPayment.date_iban).format("YYYY-MM-DD") : '';
 
     $('#sum').val(selectedPayment.sum);
     $('#vs').val(selectedPayment.vs);
@@ -303,6 +303,24 @@
 
     loadAndShowEditForm(paymentId);
   });
+
+  function validateForm(){
+    var vs = document.getElementById('vs').value;
+    var ks = document.getElementById('ks').value
+    var ss = document.getElementById('ss').value
+
+    var errorMessage = '';
+
+    if (isNaN(vs) || isNaN(ks) || isNan(ss)){
+      Swal.fire({
+        title: 'Chyba!',
+        text: 'Variabilný symbol, špecifický symbol a konštantný symbol musia byť číselné hodnoty.',
+        icon: 'error',
+      });
+      return false;
+    }
+    return true;
+  }
 </script>
 
 <!-- Skript, ktorý používam pre ODSTRÁNENIE uloženej platby -->
@@ -395,10 +413,24 @@ function confirmDelete(button){
     var adress = $('#preview_adress').val();
     var adress2 = $('#preview_adress2').val();
 
-    if (!iban || !sum || !moneytype || iban === "0" || sum === "0" || moneytype === "0") {
+    // Overenie, či VS, SS a KS sú zadané ako číselné hodnoty
+    var isVSValid = vs === "" || /^\d+$/.test(vs);
+    var isSSValid = ss === "" || /^\d+$/.test(ss);
+    var isKSValid = ks === "" || /^\d+$/.test(ks);
+
+    if (!iban || !sum || !moneytype || iban === "0" || sum === "0.00" || moneytype === "0") {
       Swal.fire({
         title: 'Chyba!',
         text: 'Nie je možné vygenerovať QR kód, pokiaľ nie je zadaný IBAN, suma a mena danej platby.',
+        icon: 'error',
+      }).then(() => {
+        $('#previewModal').modal('hide');
+      });
+      return;
+    } else if (!isVSValid || !isSSValid || !isKSValid) {
+      Swal.fire({
+        title: 'Chyba!',
+        text: 'Variabilný symbol, špecifický symbol a konštantný symbol musia byť číselné hodnoty.',
         icon: 'error',
       }).then(() => {
         $('#previewModal').modal('hide');
